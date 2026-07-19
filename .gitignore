@@ -1,0 +1,20 @@
+# mc runtime home — back up durable state only.
+# Keep: concierge/ (STATUS.md = durable memory),
+#       fleet/{star,snooze,focus,pin,domain-overrides,stats.log}, gates/, inbox/.
+# Large / transient — do not back up (comments MUST be on their own line;
+# git does not treat trailing '#' as a comment):
+
+# raw ANSI pipe-pane mirrors
+log/
+# git worktrees of OTHER repos — never commit these
+worktrees/
+# full-scrollback capture dumps
+fleet/snapshots/
+# park pre-kill captures
+fleet/captures/
+# regenerated on every `mc next`
+fleet/last-next
+*.tmp
+.DS_Store
+.backup.log
+.backup-heartbeat-url
