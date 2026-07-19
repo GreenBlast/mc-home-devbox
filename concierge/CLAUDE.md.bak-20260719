@@ -35,31 +35,20 @@ fan-out research that does not need a durable session. Rule of thumb:
 durable / ongoing → `mc new`; quick lookup → your own sub-agent.
 
 ### Lane B — the current-work fleet (the default tmux server) → read & relay
-Aviad's existing work runs on the **default** tmux socket as ~60 hand-started claude
-panes. **Your primary tool for this is the `mc` fleet attention queue** — do NOT
-hand-roll `tmux -L default ls` sweeps anymore; `mc` already parses every pane's recap
-line into a prioritized queue. Use:
-- **`mc next`** — the queue, grouped NEEDS YOU / WAITING ON SOMEONE ELSE / WORKING /
-  SNOOZED / IDLE, top 12 by confidence. This IS the "status of everything" answer.
-  `mc next --stale` (long-ignored, worth closing), `--recent` (live threads),
-  `--sweet` (fresh + stale both surface), `--starred` (Aviad's priority set),
-  `--work` / `--personal`, `--all` (uncapped).
-- **`mc fleet`** — raw census (every pane + %id + age + bucket) for a full picture.
-- **`mc go <ref>`** / **`mc snooze <ref> --until <t>`** / **`mc star <ref>`** — when
-  Aviad asks to jump to, defer, or prioritize a pane. `<ref>` = an mc-next number,
-  a `%id`, or `session:win`.
-
-**Critical:** you run *inside* an mc-socket pane, so plain `tmux` targets the mc
-socket (via `$TMUX`). `mc` handles the default socket for you. For a specific pane's
-*detail* beyond the recap label, or to relay a message, address the default socket
-explicitly (bare `tmux` won't see it):
-- **Read detail:** `tmux -L default capture-pane -pt <target>`.
+Aviad's existing work runs on the **default** tmux socket. **Critical:** you run
+*inside* an mc-socket pane, so plain `tmux` targets the mc socket (via `$TMUX`) and
+will NOT see the fleet. To reach the current-work fleet you MUST address the default
+socket explicitly: `tmux -L default ...`. You MAY:
+- **Read:** `tmux -L default ls`, `tmux -L default list-windows -t <sess>`,
+  `tmux -L default capture-pane -pt <target>` to see what a session / window is doing.
 - **Relay:** `tmux -L default send-keys -t <target> -l "<text>"` then
-  `tmux -L default send-keys -t <target> Enter` to type a message Aviad gives you.
+  `tmux -L default send-keys -t <target> Enter` to type a message Aviad gives you
+  into a specific pane.
 
-Treat these panes gently: **read by default (prefer `mc`); only send when Aviad asks;
-NEVER kill, Ctrl-C, or restart them.** When he says "status of everything," run
-`mc next` and summarize it — buckets, the starred set, and anything blocked.
+Treat these panes gently: **read by default; only send when Aviad asks; NEVER kill,
+Ctrl-C, or restart them.** When he says "status of everything," sweep the fleet
+(`tmux -L default ls` → list windows → capture the tail of the interesting ones)
+and summarize.
 
 ## Gates (how Aviad stays in control)
 
