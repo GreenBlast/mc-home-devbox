@@ -1,6 +1,21 @@
 # Mission Control — Concierge STATUS
 
-_Last updated: 2026-07-19 ~20:50 (fresh session; prior STATUS was 10 days stale)_
+_Last updated: 2026-07-19 21:45 (re-sweep; prior entry 20:50)_
+
+## Change since 20:50 sweep
+- **Main:18 came back from the dead.** Was a 694d no-signal pane; ran `/memory-sync`
+  (Mac→devbox) and finished: 4 memories merged from the Mac, 2 kept devbox-side,
+  ~52 skipped (~50 Atly work-repo memories — no checkout on devbox — + 2 Mac-hardware).
+  Notable merge: `syncthing_updatetime_conflicts` reclassified — 2026-07-12 saw **real
+  content loss** via tail-append collision; conflict files are a merge queue, never
+  bulk-delete. Its MEMORY.md hook was corrected (old one said "canonical always wins",
+  which was dangerous).
+  - **It has a question pending:** run `~/.claude/backup.sh` now, or let the hourly
+    systemd timer commit the new memory files? (mc labels this pane "working"; it is
+    actually idle awaiting an answer.)
+  - Follow-up: this was one direction only. Several devbox-original memories are newer
+    than the Mac's — run `/memory-sync` on the Mac for the reverse pass.
+- Nothing else moved. Same 11 NEEDS-YOU, no gates, no new panes.
 
 ## Digest
 - **Lanes:** Lane A — no real initiatives running (mc socket has only me + the two
