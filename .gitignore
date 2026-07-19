@@ -14,6 +14,8 @@ fleet/snapshots/
 fleet/captures/
 # regenerated on every `mc next`
 fleet/last-next
+# transient open/close diff state — rewritten every sample, pure churn
+fleet/panes-seen
 *.tmp
 .DS_Store
 .backup.log
