@@ -1,4 +1,4 @@
-0	%4	claude:1	personal	needs	8	0	0	26c89231-4090-427a-9b0b-b18c737cf25f	-	⏸ at an interactive prompt — answer to continue
+0	%4	claude:1	personal	needs	9	0	0	26c89231-4090-427a-9b0b-b18c737cf25f	-	⏸ at an interactive prompt — answer to continue
 2	%1	shabbat-ac-monitor:1	personal	needs	999999	0	0	-	-	set the master bedroom setpoint, currently 25° while the rest are at 21
-9	%9	shabbat-ac-monitor:2	personal	nosignal	22	0	0	8b3237b1-af74-4fdf-a584-43828d5e9917	-	shabbat-ac-alarm-watch
+9	%9	shabbat-ac-monitor:2	personal	nosignal	23	0	0	8b3237b1-af74-4fdf-a584-43828d5e9917	-	shabbat-ac-alarm-watch
 2	%0	shabbat-guardian-site:1	personal	needs	999999	0	0	-	-	tell me whether to start Phase 3 (read-only checker) or hold until after
