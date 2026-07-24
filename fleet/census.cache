@@ -1,4 +1,3 @@
-9	%38	Main:1	personal	working	0	0	0	9d2c8ed1-e877-42fc-b909-8b986cbe0245	-	⚙ working — was: Next action is optionally noting her portal access in the vault's Grocer
-9	%43	Main:2	personal	working	0	0	0	a1782afd-84f4-4231-8e99-2f5e8855cbcb	-	⚙ working
-9	%7	claude:1	personal	nosignal	56	0	0	193098a0-0df6-482c-b6e2-59c2fcb475e9	-	obsidian-helper
-9	%42	hermes-backup-hardening:1	personal	working	0	0	0	5a450a5c-cce9-4c0f-9e66-97fa04a4c0b6	-	⚙ working
+0	%4	claude:1	personal	needs	33	0	0	26c89231-4090-427a-9b0b-b18c737cf25f	-	⏸ at an interactive prompt — answer to continue
+2	%1	shabbat-ac-monitor:1	personal	needs	999999	0	0	-	-	set the master bedroom setpoint, currently 25° while the rest are at 21
+2	%0	shabbat-guardian-site:1	personal	needs	999999	0	0	-	-	tell me whether to start Phase 3 (read-only checker) or hold until after
