@@ -1,6 +1,6 @@
-0	%4	claude:1	personal	needs	40	0	0	26c89231-4090-427a-9b0b-b18c737cf25f	-	⏸ at an interactive prompt — answer to continue
+0	%4	claude:1	personal	needs	41	0	0	26c89231-4090-427a-9b0b-b18c737cf25f	-	⏸ at an interactive prompt — answer to continue
 9	%10	grocerylist-items-fix:1	personal	nosignal	999999	0	0	-	-	(no recap signal)
 2	%1	shabbat-ac-monitor:1	personal	needs	999999	0	0	-	-	set the master bedroom setpoint, currently 25° while the rest are at 21
-2	%9	shabbat-ac-monitor:2	personal	needs	6	0	0	8b3237b1-af74-4fdf-a584-43828d5e9917	-	next time:** 404 +add a Bash allow rule for `curl` POSTs to `http://100
+2	%9	shabbat-ac-monitor:2	personal	needs	7	0	0	8b3237b1-af74-4fdf-a584-43828d5e9917	-	next time:** 404 +add a Bash allow rule for `curl` POSTs to `http://100
 2	%0	shabbat-guardian-site:1	personal	needs	999999	0	0	-	-	tell me whether to start Phase 3 (read-only checker) or hold until after
-0	%11	smart-lock-research:1	personal	needs	999999	0	0	-	-	⏸ at an interactive prompt — answer to continue
+9	%11	smart-lock-research:1	personal	nosignal	999999	0	0	-	-	(no recap signal)
