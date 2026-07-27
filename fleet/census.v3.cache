@@ -1,4 +1,4 @@
-9	%13	Main:2	personal	snoozed	1403	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	Mon 18:00	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
-0	%19	Main:3	personal	needs	84	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	commit and push the repo backlog edit
-1	%20	Main:4	personal	needs	70	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	pick whether you change the Grafana InfluxDB datasource URL yourself or 
+9	%13	Main:2	personal	snoozed	1463	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	Mon 18:00	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
+9	%19	Main:3	personal	working	0	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	⚙ working — was: merge + deploy
+1	%20	Main:4	personal	needs	3	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	Next action is your call on running docker builder prune to reclaim ~7GB
 1	%18	hermes-backup-health-fix:1	personal	needs	999999	0	0	-	-	Verify and complete Hermes devbox Fleet migration cleanup	0	 Only open item is your call on whether to fix the systemd PATH causing 
