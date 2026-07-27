@@ -1,3 +1,3 @@
-9	%19	Main:2	personal	working	0	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	⚙ working
-2	%20	Main:3	personal	needs	0	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	decide whether to run docker builder prune, since dockerhost's disk is a
+2	%19	Main:2	personal	needs	52	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	say the word and I'll merge and deploy it
+2	%20	Main:3	personal	needs	61	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	decide the disk alert threshold, since the box sits at 74% against a 70%
 1	%18	hermes-backup-health-fix:1	personal	needs	999999	0	0	-	-	Verify and complete Hermes devbox Fleet migration cleanup	0	next action is your call on whether to fix the systemd PATH churn
