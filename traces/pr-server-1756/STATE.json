@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1756",
+  "repo": "stepscode/steps-server",
+  "number": 1756,
+  "author": "8Gaston8",
+  "mode": "full_loop",
+  "state": "STALLED",
+  "head_sha": "2ea744005eb47fc0658d5b6351a995fa1b46d197",
+  "base_sha": "b418c8fb2a15e2c14a176dee6b6beb5ad55af1ee",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": "2026-07-27T15:58:28.146829+00:00",
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:28.147008+00:00",
+  "updated_at": "2026-07-27T16:23:09.425597+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:28.146829+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "no push for 33.0d (limit 3d) -- backlog, not forward-only traffic",
+      "head_sha": "2ea744005eb47fc0658d5b6351a995fa1b46d197",
+      "round": 0
+    }
+  ]
+}

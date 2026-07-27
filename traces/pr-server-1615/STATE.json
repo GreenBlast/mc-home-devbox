@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1615",
+  "repo": "stepscode/steps-server",
+  "number": 1615,
+  "author": "shirlau",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "b4f381e63384bb63e60da1ebf31abcb96dad5dbb",
+  "base_sha": "65ea095084ba32f725e1a54df06c66e8c4334610",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:31.556584+00:00",
+  "updated_at": "2026-07-27T16:23:12.578707+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:31.556417+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 36.0d (limit 3d)",
+      "head_sha": "b4f381e63384bb63e60da1ebf31abcb96dad5dbb",
+      "round": 0
+    }
+  ]
+}

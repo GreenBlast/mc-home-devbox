@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#934",
+  "repo": "stepscode/steps-server",
+  "number": 934,
+  "author": "omriasteps",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "f9b5edb72661070084958368af1e25e299461821",
+  "base_sha": "c76c2e944c0ed00b9df28d5346876c08f3078de1",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": "2026-07-27T15:58:31.671676+00:00",
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:31.671774+00:00",
+  "updated_at": "2026-07-27T16:23:13.378250+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:31.671676+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "no push for 454.1d (limit 3d) -- backlog, not forward-only traffic",
+      "head_sha": "f9b5edb72661070084958368af1e25e299461821",
+      "round": 0
+    }
+  ]
+}

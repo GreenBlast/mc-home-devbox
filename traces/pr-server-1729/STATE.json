@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1729",
+  "repo": "stepscode/steps-server",
+  "number": 1729,
+  "author": "atlyguy123",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "ca60e7b89656c94fe954c24b97272e540d3b4340",
+  "base_sha": "d7b6d6710e9aeb01033c95a1d5b8f41f80e35c1b",
+  "base_ref": "save2atly/v1-tiktok-pipeline",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:28.752147+00:00",
+  "updated_at": "2026-07-27T16:23:10.396423+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:28.752035+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 75.2d (limit 3d)",
+      "head_sha": "ca60e7b89656c94fe954c24b97272e540d3b4340",
+      "round": 0
+    }
+  ]
+}

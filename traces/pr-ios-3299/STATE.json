@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-ios#3299",
+  "repo": "stepscode/steps-ios",
+  "number": 3299,
+  "author": "atlyguy123",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "e8a46e00a0cb63e1e753bbbffb7cd52f75695a06",
+  "base_sha": "72b24d4f770d4292275ec11ef6b3e1c99418d68f",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:36.368131+00:00",
+  "updated_at": "2026-07-27T16:23:18.278263+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:36.367993+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 28.0d (limit 3d)",
+      "head_sha": "e8a46e00a0cb63e1e753bbbffb7cd52f75695a06",
+      "round": 0
+    }
+  ]
+}

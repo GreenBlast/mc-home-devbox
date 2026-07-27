@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1857",
+  "repo": "stepscode/steps-server",
+  "number": 1857,
+  "author": "aviadsteps",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "870c6b746e082e191ec2102963a42c1cdf6d847f",
+  "base_sha": "463041cda90eb1da430ce7319e1afd4e974dbcba",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": true,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:24.507074+00:00",
+  "updated_at": "2026-07-27T16:23:05.825082+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:24.506992+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 32.1d (limit 3d)",
+      "head_sha": "870c6b746e082e191ec2102963a42c1cdf6d847f",
+      "round": 0
+    }
+  ]
+}

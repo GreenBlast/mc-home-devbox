@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/atly-tileserver#307",
+  "repo": "stepscode/atly-tileserver",
+  "number": 307,
+  "author": "atlyguy123",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "b894462ae5793a8cfe1e78f3d02bd9c41d140928",
+  "base_sha": "4e94b1e17c47aebed5286d3a7ccd988d4d5c4d67",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:39.622486+00:00",
+  "updated_at": "2026-07-27T16:23:21.183432+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:39.622365+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 68.2d (limit 3d)",
+      "head_sha": "b894462ae5793a8cfe1e78f3d02bd9c41d140928",
+      "round": 0
+    }
+  ]
+}

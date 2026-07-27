@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1955",
+  "repo": "stepscode/steps-server",
+  "number": 1955,
+  "author": "8Gaston8",
+  "mode": "full_loop",
+  "state": "WAITING_ON_BOTS",
+  "head_sha": "e05a3d5792847b608e5edb6caaaf981e7521a4ea",
+  "base_sha": "58ccd689a85de02ab3c123c794abab7109836b85",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T16:22:06.664756+00:00",
+  "updated_at": "2026-07-27T16:22:59.908524+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T16:22:06.664643+00:00",
+      "from": "DISCOVERED",
+      "to": "WAITING_ON_BOTS",
+      "reason": "waiting on baz-reviewer, chatgpt-codex-connector (5m since push)",
+      "head_sha": "e05a3d5792847b608e5edb6caaaf981e7521a4ea",
+      "round": 0
+    }
+  ]
+}

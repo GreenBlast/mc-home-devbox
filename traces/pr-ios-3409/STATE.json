@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-ios#3409",
+  "repo": "stepscode/steps-ios",
+  "number": 3409,
+  "author": "8Gaston8",
+  "mode": "full_loop",
+  "state": "STALLED",
+  "head_sha": "9a5e449a589621cbab1c083c0334dcdb3dc28b00",
+  "base_sha": "482b2438baeb7f6d372a6fb5dab9e995ba7da468",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:33.277769+00:00",
+  "updated_at": "2026-07-27T16:23:14.869627+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:33.277477+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 8.3d (limit 3d)",
+      "head_sha": "9a5e449a589621cbab1c083c0334dcdb3dc28b00",
+      "round": 0
+    }
+  ]
+}

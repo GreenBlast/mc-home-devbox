@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1941",
+  "repo": "stepscode/steps-server",
+  "number": 1941,
+  "author": "aviadsteps",
+  "mode": "review_only",
+  "state": "REMEDIATION",
+  "head_sha": "f65e9a0929206b90afcf970cda5343675ca8fc71",
+  "base_sha": "d8ebefe337832d68381ffb0f762da8c24eae51db",
+  "base_ref": "release-3.169.0",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": true,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:19.348252+00:00",
+  "updated_at": "2026-07-27T16:22:59.903757+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:19.348086+00:00",
+      "from": "DISCOVERED",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- bot threads: 1 open (baz-reviewer)",
+      "head_sha": "f65e9a0929206b90afcf970cda5343675ca8fc71",
+      "round": 0
+    }
+  ]
+}

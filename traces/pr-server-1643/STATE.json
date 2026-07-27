@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-server#1643",
+  "repo": "stepscode/steps-server",
+  "number": 1643,
+  "author": "omriasteps",
+  "mode": "review_only",
+  "state": "STALLED",
+  "head_sha": "c9df42fc2566ee48667c7991c27df2b5c3258a0e",
+  "base_sha": "c9d3ef0295b56d00be9e577e337bcca2577bb869",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-27T15:58:31.197417+00:00",
+  "updated_at": "2026-07-27T16:23:12.233170+00:00",
+  "history": [
+    {
+      "at": "2026-07-27T15:58:31.197266+00:00",
+      "from": "DISCOVERED",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 90.0d (limit 3d)",
+      "head_sha": "c9df42fc2566ee48667c7991c27df2b5c3258a0e",
+      "round": 0
+    }
+  ]
+}
