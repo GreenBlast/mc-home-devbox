@@ -1,2 +1,2 @@
-1	%13	Main:2	personal	needs	557	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	-	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
-2	%14	Main:3	personal	needs	10	0	0	5f4df9b7-bede-4547-87f8-08a1b9691ff3	-	Set up yadm on dockerhost	0	Next action is yours: add the printed dockerhost public key to GitHub so
+1	%13	Main:2	personal	needs	1038	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	-	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
+2	%14	Main:3	personal	needs	453	0	0	5f4df9b7-bede-4547-87f8-08a1b9691ff3	-	Set up yadm on dockerhost	0	Next action is yours — run `bash /tmp/dockerhost-root-setup
