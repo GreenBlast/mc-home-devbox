@@ -4,8 +4,8 @@
   "number": 1955,
   "author": "8Gaston8",
   "mode": "full_loop",
-  "state": "WAITING_ON_BOTS",
-  "head_sha": "e05a3d5792847b608e5edb6caaaf981e7521a4ea",
+  "state": "REVIEWING",
+  "head_sha": "85b03fd04cdca283c489f7ce8f055b80134ffa02",
   "base_sha": "58ccd689a85de02ab3c123c794abab7109836b85",
   "base_ref": "develop",
   "reviewed_shas": [],
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-07-27T16:33:25.683005+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T16:22:06.664756+00:00",
-  "updated_at": "2026-07-27T16:22:59.908524+00:00",
+  "updated_at": "2026-07-27T17:25:26.175374+00:00",
   "history": [
     {
       "at": "2026-07-27T16:22:06.664643+00:00",
@@ -39,6 +39,22 @@
       "to": "WAITING_ON_BOTS",
       "reason": "waiting on baz-reviewer, chatgpt-codex-connector (5m since push)",
       "head_sha": "e05a3d5792847b608e5edb6caaaf981e7521a4ea",
+      "round": 0
+    },
+    {
+      "at": "2026-07-27T17:15:01.645116+00:00",
+      "from": "WAITING_ON_BOTS",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- re-requested aviadsteps or 45m clear: no re-request; bot threads clear 42m (need 45m)",
+      "head_sha": "85b03fd04cdca283c489f7ce8f055b80134ffa02",
+      "round": 0
+    },
+    {
+      "at": "2026-07-27T17:25:26.175237+00:00",
+      "from": "REMEDIATION",
+      "to": "REVIEWING",
+      "reason": "agent iteration in progress",
+      "head_sha": "85b03fd04cdca283c489f7ce8f055b80134ffa02",
       "round": 0
     }
   ]
