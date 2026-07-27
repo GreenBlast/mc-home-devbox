@@ -1,4 +1,4 @@
-1	%13	Main:2	personal	needs	1282	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	-	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
-2	%14	Main:3	personal	needs	697	0	0	5f4df9b7-bede-4547-87f8-08a1b9691ff3	-	Set up yadm on dockerhost	0	Next action is yours — run `bash /tmp/dockerhost-root-setup
-9	%17	Main:4	personal	nosignal	9	0	0	8a420c8f-1b87-4bb4-bc4e-382aea81059d	-	Resolve neovim version discrepancy between devbox and dockerhost	0	Resolve neovim version discrepancy between devbox and dockerhost
-9	%18	hermes-backup-health-fix:1	personal	working	999999	0	0	-	-	Verify and complete Hermes devbox Fleet migration cleanup	0	⚙ working
+9	%13	Main:2	personal	snoozed	1342	0	0	7aeb3215-b8b1-4c7e-abab-6e3e28bdd31e	Mon 18:00	Find concealed carry solution for hiking trips	0	say whether you want the primary Israeli license regulation text pulled 
+0	%19	Main:3	personal	needs	24	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	commit and push the repo backlog edit
+1	%20	Main:4	personal	needs	10	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	pick whether you change the Grafana InfluxDB datasource URL yourself or 
+1	%18	hermes-backup-health-fix:1	personal	needs	999999	0	0	-	-	Verify and complete Hermes devbox Fleet migration cleanup	0	 Only open item is your call on whether to fix the systemd PATH causing 
