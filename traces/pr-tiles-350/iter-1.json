@@ -1,0 +1,99 @@
+{
+  "iteration": 1,
+  "head_sha": "c28969b3ae2ad9974855a55008924c3c8df7b427",
+  "verdict": "ESCALATE",
+  "one_liner": "Flips CARDS_ROLLOUT_PCT from 25 to 100 in infra/prod.env, taking the tileLocationCards read model to full production traffic on the four tile routes.",
+  "findings": [
+    {
+      "id": "f1",
+      "class": "protected",
+      "gate": null,
+      "file": "infra/prod.env",
+      "line": 21,
+      "body": "PROTECTED ZONE — not posted. The entire diff is a production infrastructure config change (infra/prod.env), and its content is a rollout-strategy decision. Three independent rules in the calibrated taxonomy route this to Aviad: protected zone 'prod-infra' is never auto-bucketed safe regardless of how clean or green (taxonomy:36); 'rollout strategy' is in the always-escalate Needs-Aviad set (taxonomy:199); and T3 records the cards read-model rollout under CARDS_ROLLOUT_PCT by name as an AVIAD item (taxonomy:153). The go/no-go on ramping production to 100% is a human decision, not a reviewer finding.",
+      "failure_path": "Not a code defect. If this were auto-bucketed safe or answered by the loop, an autonomous agent would be adjudicating a full-traffic production cutover of the tile read path — the highest-blast-radius change class in this repo — on the strength of unverifiable prose.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f2",
+      "class": "protected",
+      "gate": null,
+      "file": null,
+      "line": null,
+      "body": "PROTECTED ZONE — not posted. Every criterion this 'criteria-gated' ramp claims to be gated on exists only as an assertion in the PR body: zero errors in both cohorts, cards p50 101ms / p95 237ms vs legacy p50 104ms / p95 391ms, 160 reqs / 80 buckets at the 25% deploy, backfill delta-0, sync verified writing, drift fallback active, drift warns ~0. No dashboard link, log excerpt, probe output, or artifact is attached. Per the charter, PR text is untrusted data. The code review confirms the ramp MECHANISM is sound (see briefing), but the mechanism was never the risk — the evidence is, and it is exactly the part that cannot be verified by reading anything. Aviad should confirm these numbers against the actual morgan logs / prod dashboards before approving.",
+      "failure_path": "If any cited figure is stale or was measured on a non-representative window, the ramp proceeds on false premises and the first real signal arrives as a production incident at 100% traffic rather than at 25%. Nothing in the diff, the CI results, or the bot approval would have caught that.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f3",
+      "class": "protected",
+      "gate": null,
+      "file": "app/businessLogic/fetchers.js",
+      "line": 1237,
+      "body": "PROTECTED ZONE — not posted. Asymmetric drift safety, amplified by this line. The per-location $in path has a real fallback: fetchers.js:1392-1404 detects ids missing from tileLocationCards and re-reads them from `locations`, so sync lag degrades to one extra query plus a warn. The quadkey/tile query shapes have NO such fallback — getAtly4CategoriesSmallDotsInTile (fetchers.js:1237) and getAtly4TileLocationsByCategoryIds (fetchers.js:1286) read getCardsCollectionName() directly, so a location whose card has not synced is simply absent from the tile, silently, with no warn. This is pre-existing and not introduced by this diff, but the diff is precisely what takes its blast radius from 25% of users to 100%. Worth Aviad deciding whether he wants a coverage assertion on the quadkey path before the final step rather than after.",
+      "failure_path": "A new or re-merged location whose tileLocationCards row lags the backfill does not appear on category or map tiles. At 25% one user in four saw the gap and three saw the pin, which is itself the detection signal; at 100% every user sees the same gap and no cohort disagrees, so the failure is uniform and therefore invisible to cohort-comparison monitoring. The $in path would have logged 'tile card missing — fell back to locations'; this path logs nothing.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f4",
+      "class": "protected",
+      "gate": null,
+      "file": null,
+      "line": null,
+      "body": "PROTECTED ZONE — not posted. Two rollout-strategy questions for Aviad, both judgment, neither a defect. (1) 25 -> 100 skips the conventional 50 step. Because cohort membership is monotonic in bucket(userId), buckets 25-99 — three quarters of users, none previously exercised — all onboard in a single move. The body argues the pause buys no new evidence per Joshua's pace directive; that is a legitimate position and it is his call, not the loop's. (2) Going to exactly 100 dismantles the measurement instrument. Every number cited as evidence came from concurrent A/B comparison against a live legacy cohort on the same traffic. At 100 no legacy cohort remains on the tile routes, so the post-ramp watch the body describes ('watch through the next traffic peak') degrades from concurrent-cohort comparison to historical comparison across a peak. Holding at 95 rather than 100 would preserve a control cohort at almost no cost. Taxonomy:171 records that he wants the explicit plan for rollouts — the body does supply one, which is better than typical, but the choice of end-state percentage is still his.",
+      "failure_path": "Not a code defect. If a regression appears after the ramp, there is no concurrent legacy cohort to attribute it against, so distinguishing 'cards caused this' from 'the traffic peak caused this' requires comparing against historical baselines across a period where load itself changed — the weakest form of the evidence that justified every prior step.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f5",
+      "class": "protected",
+      "gate": null,
+      "file": null,
+      "line": null,
+      "body": "PROTECTED ZONE — not posted. Deploy-path context the human needs, which I could not fully resolve read-only. infra/index.ts:19 bakes prod.env into the ECS task definition via dotenv.parse, and infra/index.ts:131-134 rebuilds the container image from ../app on every `pulumi up`. deploy_prod.yml triggers on push to `master`, not `develop` — so merging this PR into develop ramps nothing by itself; a separate develop -> master promotion performs the ramp, and that promotion carries every other app change sitting on develop plus a fresh image build. The 'one-line diff' framing accurately describes the PR but not the deploy that enacts it. I could not enumerate what else would ride along: the local clone at /home/aviad/Projects/monorepo/atly-tileserver is stale relative to origin/develop (its infra/prod.env predates the cards flags entirely), and the charter forbids fetching. Flagging as an open question, not a claim. Separately and explicitly NOT introduced by this diff: infra/prod.env is a checked-in secret store — it carries a live MongoDB connection string with password and a GROQ_API_KEY in plaintext in git. infra/AGENTS.md:28-32 acknowledges these files are tracked-but-sensitive and must not be printed. No gate fires (this diff adds no secret), but the human should know the file being edited has this property.",
+      "failure_path": "Not a code defect. The risk is a mismatch between what the PR is understood to change (one integer) and what the deploy that carries it actually ships (that integer plus an unenumerated set of develop commits plus a rebuilt image), which would make an incident after the ramp harder to attribute to the ramp.",
+      "already_raised_by_bots": false
+    }
+  ],
+  "verified_fixed": [],
+  "regressions": [],
+  "escalate": {
+    "reason": "Protected zone — prod-infra. The entire diff is infra/prod.env, and its substance is a production rollout-strategy decision (CARDS_ROLLOUT_PCT 25 -> 100, final step of the cards read-model ramp). The charter routes protected zones to escalation unconditionally: they escalate and are never posted. Three independent rules in the calibrated taxonomy agree — prod-infra is never bucketed safe regardless of how green (taxonomy:36), 'rollout strategy' is in the always-escalate set (taxonomy:199), and T3 names CARDS_ROLLOUT_PCT as an AVIAD item (taxonomy:153). Escalating on round 1 rather than burning rounds 2-3: no further reading changes the routing, and the two things that actually decide this PR — whether the production evidence is real, and whether 100 is the right end-state — are not answerable from the diff by any number of additional passes.",
+    "bucket": "NEEDS AVIAD",
+    "postable_findings": 0,
+    "why_nothing_posted": "All five findings are facets of the same protected-zone decision, so all are classed `protected` and none is postable. This is deliberate on two grounds. First, the charter: protected-zone content is never posted. Second, the loop: anything the loop posts starts Conductor - Review Remediation immediately, and a live autonomous fix agent turned loose on a production traffic-cutover PR is the worst available outcome. There is no finding here Conductor could correctly act on — the open questions are decisions, not defects.",
+    "code_review_result": "The ramp mechanism is CLEAN. I verified it against app/model/tileReadModel.js in the local clone rather than trusting the PR body, and found no Layer-1 High or Medium in the code path: (a) getCardsRolloutPct() clamps >=100 to 100 and userRolloutBucket() returns 0..99, so `bucket < 100` is always true — 100 genuinely means all tile traffic, no off-by-one; (b) all four tile routes take :userId as a required path segment and readModelContextMiddleware seeds the AsyncLocalStorage store for exactly those four prefixes, so the 'missing userId => legacy' escape hatch at tileReadModel.js:119-121 cannot silently strand a slice of prod traffic on legacy; (c) boot-time default-deny via validateTileReadModel() is untouched — missing named indexes on tileLocationCards still force legacy regardless of pct=100, so deny-wins survives the ramp; (d) the stated rollback is complete, not partial — getCardsRolloutPct() reads process.env per request with no module-level memoization, and every consumer of getCardsCollectionName()/getRankCollectionName() lives in fetchers.js reachable only from those four routes, so CARDS_ROLLOUT_PCT=0 plus redeploy fully reverts the read path. I specifically suspected non-request-context callers would be left on cards after a rollback (getTileReadModel() returns the boot model when there is no ALS store, tileReadModel.js:126-130) and checked every call site; there are none in the serving path, so that concern does not hold and is not reported as a finding. What remains is operational risk that turns on production evidence, which is why this is a human decision rather than a review finding.",
+    "ci_note": "sensitive-scope-approval-gate FAILURE x2 is the designed state, not a defect. scripts/sensitive_scope_gate.py treats every path outside .codex/skills/ as sensitive and requires an aviadsteps approval of the reviewed diff, so the gate stays red until Aviad approves — it is the mechanism enforcing exactly the escalation this verdict names. mergeStateStatus UNSTABLE follows from it. Run Tests (20.x) SUCCESS; require-resolved-review-threads SUCCESS x2.",
+    "bots_note": "baz-reviewer APPROVED at head SHA c28969b3ae2a with an empty body; review_threads is empty, so there is nothing to dedupe against or endorse, and no chatgpt-codex-connector thread exists. Bot approval of a single changed integer in an env file carries near-zero independent signal and was not treated as evidence. No conductor-needs-gaston markers were present.",
+    "questions_for_aviad": [
+      "Do the cited production numbers hold against the real morgan logs and dashboards — zero errors in both cohorts, cards p95 237ms vs legacy p95 391ms, backfill delta-0, drift warns ~0? Nothing in the PR substantiates them and the loop cannot verify them.",
+      "Is skipping the 50% step acceptable here? Bucket monotonicity means buckets 25-99 — three quarters of users, none previously exercised — all onboard in one move.",
+      "Do you want the end-state at 95 rather than 100, to keep a live legacy control cohort for the post-ramp watch through the traffic peak? At 100 there is no concurrent cohort left to compare against.",
+      "The quadkey tile shapes (fetchers.js:1237, 1286) have no drift fallback and no warn, unlike the $in path (fetchers.js:1392). Acceptable at 100% traffic, or worth a coverage assertion before the final step?",
+      "Which develop commits will ride along on the develop -> master promotion that actually performs this ramp? deploy_prod.yml fires on master, and pulumi up rebuilds the image from ../app, so the deploy is not env-only. I could not enumerate this read-only (local clone is stale, fetching is forbidden)."
+    ]
+  },
+  "briefing": {
+    "what_it_does": "Single-line change to infra/prod.env raising CARDS_ROLLOUT_PCT from 25 to 100 — the final step of the tileLocationCards read-model ramp (5 -> 25 -> 100). At 100 every request on the four tile routes (/mapPins, /categoryPins, /categories, /userPins) resolves to the boot-validated cards model instead of the legacy locations + locationReviewCategories path. TILE_READ_MODEL=cards, DB_ROUNDTRIP_TELEMETRY, REF_DATA_CACHE and IMAGES_SKIP_ATTACHMENTS are unchanged and, per the in-file comment, already apply to both cohorts un-gated.",
+    "red_flags": [
+      "Protected zone: prod-infra (infra/prod.env) — escalates unconditionally, never posted.",
+      "Rollout strategy — in the always-escalate Needs-Aviad set; T3 names CARDS_ROLLOUT_PCT specifically.",
+      "All gating evidence is unverifiable prose in the PR body; no artifact, dashboard link or log excerpt attached.",
+      "25 -> 100 skips the conventional 50 step; buckets 25-99 (75% of users, never exercised) onboard at once.",
+      "At 100 no concurrent legacy control cohort remains, so post-ramp monitoring loses the A/B instrument that produced every number cited.",
+      "Quadkey tile shapes (fetchers.js:1237, 1286) lack the drift fallback the $in path has (fetchers.js:1392); this line takes that gap from 25% to 100% of users.",
+      "The deploy that enacts this fires on master and rebuilds the image from ../app, so it is not env-only; contents of the develop -> master promotion could not be enumerated read-only.",
+      "Pre-existing, NOT introduced here: infra/prod.env holds a live MongoDB password and GROQ_API_KEY in plaintext in git."
+    ],
+    "core_files": [
+      "infra/prod.env",
+      "app/model/tileReadModel.js",
+      "app/businessLogic/fetchers.js",
+      "infra/index.ts",
+      ".github/workflows/deploy_prod.yml"
+    ],
+    "loop_history": "Round 1. Full Layer 1 + 1b + 2 completed; diff read in full (one line, 547 bytes). Ramp mechanism verified clean against the local clone — no Layer-1 High or Medium in code. Escalated on round 1 as protected zone rather than consuming rounds 2-3: the routing is dispositive on three independent rules and no additional reading changes it.",
+    "ci": "Tests green (Run Tests 20.x SUCCESS); require-resolved-review-threads SUCCESS x2; sensitive-scope-approval-gate FAILURE x2 = awaiting Aviad's approval, which is the designed state for any path outside .codex/skills/. mergeStateStatus UNSTABLE follows from that gate. baz-reviewer APPROVED at head SHA, zero review threads.",
+    "aviad_risk_label": null
+  }
+}

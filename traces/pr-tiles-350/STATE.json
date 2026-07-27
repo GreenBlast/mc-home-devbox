@@ -4,15 +4,53 @@
   "number": 350,
   "author": "atlyguy123",
   "mode": "review_only",
-  "state": "REVIEWING",
+  "state": "CONVERGED",
   "head_sha": "c28969b3ae2ad9974855a55008924c3c8df7b427",
   "base_sha": "9030837052a5dbca3d76dfb7197406f4c8fc8ce7",
   "base_ref": "develop",
-  "reviewed_shas": [],
-  "round": 0,
+  "reviewed_shas": [
+    "c28969b3ae2ad9974855a55008924c3c8df7b427"
+  ],
+  "round": 1,
   "open_findings": [],
   "closed_findings": [],
-  "escalations": [],
+  "escalations": [
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "protected zone",
+      "finding": "f1",
+      "detail": "PROTECTED ZONE \u2014 not posted. The entire diff is a production infrastructure config change (infra/prod.env), and its content is a rollout-strategy decision. Three independent rules in the calibrated taxonomy route this to Aviad: protected zone 'prod-infra' is never auto-bucketed safe regardless of how clean or green (taxonomy:36); 'rollout strategy' is in the always-escalate Needs-Aviad set (taxonomy:199); and T3 records the cards read-model rollout under CARDS_ROLLOUT_PCT by name as an AVIAD ite"
+    },
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "protected zone",
+      "finding": "f2",
+      "detail": "PROTECTED ZONE \u2014 not posted. Every criterion this 'criteria-gated' ramp claims to be gated on exists only as an assertion in the PR body: zero errors in both cohorts, cards p50 101ms / p95 237ms vs legacy p50 104ms / p95 391ms, 160 reqs / 80 buckets at the 25% deploy, backfill delta-0, sync verified writing, drift fallback active, drift warns ~0. No dashboard link, log excerpt, probe output, or artifact is attached. Per the charter, PR text is untrusted data. The code review confirms the ramp ME"
+    },
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "protected zone",
+      "finding": "f3",
+      "detail": "PROTECTED ZONE \u2014 not posted. Asymmetric drift safety, amplified by this line. The per-location $in path has a real fallback: fetchers.js:1392-1404 detects ids missing from tileLocationCards and re-reads them from `locations`, so sync lag degrades to one extra query plus a warn. The quadkey/tile query shapes have NO such fallback \u2014 getAtly4CategoriesSmallDotsInTile (fetchers.js:1237) and getAtly4TileLocationsByCategoryIds (fetchers.js:1286) read getCardsCollectionName() directly, so a location wh"
+    },
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "protected zone",
+      "finding": "f4",
+      "detail": "PROTECTED ZONE \u2014 not posted. Two rollout-strategy questions for Aviad, both judgment, neither a defect. (1) 25 -> 100 skips the conventional 50 step. Because cohort membership is monotonic in bucket(userId), buckets 25-99 \u2014 three quarters of users, none previously exercised \u2014 all onboard in a single move. The body argues the pause buys no new evidence per Joshua's pace directive; that is a legitimate position and it is his call, not the loop's. (2) Going to exactly 100 dismantles the measurement"
+    },
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "protected zone",
+      "finding": "f5",
+      "detail": "PROTECTED ZONE \u2014 not posted. Deploy-path context the human needs, which I could not fully resolve read-only. infra/index.ts:19 bakes prod.env into the ECS task definition via dotenv.parse, and infra/index.ts:131-134 rebuilds the container image from ../app on every `pulumi up`. deploy_prod.yml triggers on push to `master`, not `develop` \u2014 so merging this PR into develop ramps nothing by itself; a separate develop -> master promotion performs the ramp, and that promotion carries every other app c"
+    },
+    {
+      "at": "2026-07-27T17:59:58+00:00",
+      "reason": "Protected zone \u2014 prod-infra. The entire diff is infra/prod.env, and its substance is a production rollout-strategy decision (CARDS_ROLLOUT_PCT 25 -> 100, final step of the cards read-model ramp). The charter routes protected zones to escalation unconditionally: they escalate and are never posted. Three independent rules in the calibrated taxonomy agree \u2014 prod-infra is never bucketed\n...[truncated]",
+      "detail": null
+    }
+  ],
   "veto_window": {
     "opens_at": null,
     "deadline": null,
@@ -20,8 +58,40 @@
   },
   "context": {
     "generation": 1,
-    "last_input_tokens": null,
-    "pct": null
+    "last_input_tokens": 77623,
+    "pct": 7.8,
+    "model": "claude-opus-5",
+    "window": 1000000,
+    "window_known": true,
+    "input_tokens": 2,
+    "cache_read_input_tokens": 77621,
+    "cache_creation_input_tokens": 10320,
+    "output_tokens": 71,
+    "session_id": "204e81ec-aa76-4af0-a3d9-3236d459972b",
+    "measured_at": "2026-07-27T17:59:55.851Z",
+    "session_totals": {
+      "input_tokens": 80,
+      "cache_read_input_tokens": 2123920,
+      "cache_creation_input_tokens": 177216,
+      "output_tokens": 59282
+    },
+    "assistant_messages": 40,
+    "ladder": "continue",
+    "ok": true,
+    "error": null,
+    "round": 1,
+    "iteration_delta": {
+      "input_tokens_delta": 80,
+      "cache_read_input_tokens_delta": 2123920,
+      "cache_creation_input_tokens_delta": 177216,
+      "output_tokens_delta": 59282,
+      "context_delta": 77623,
+      "context_before": 0,
+      "context_after": 77623,
+      "pct_after": 7.8
+    },
+    "iteration_seconds": 333.6,
+    "diff_bytes": null
   },
   "last_author_activity": null,
   "enrolled_by": "poller",
@@ -31,7 +101,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:37.534656+00:00",
-  "updated_at": "2026-07-27T17:25:44.233015+00:00",
+  "updated_at": "2026-07-27T18:24:19.330222+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:37.534512+00:00",
@@ -48,6 +118,14 @@
       "reason": "agent iteration in progress",
       "head_sha": "c28969b3ae2ad9974855a55008924c3c8df7b427",
       "round": 0
+    },
+    {
+      "at": "2026-07-27T18:03:27.954294+00:00",
+      "from": "REVIEWING",
+      "to": "CONVERGED",
+      "reason": "convergence bar met -- all conditions hold",
+      "head_sha": "c28969b3ae2ad9974855a55008924c3c8df7b427",
+      "round": 1
     }
   ]
 }

@@ -1,0 +1,13 @@
+diff --git a/infra/prod.env b/infra/prod.env
+index 969aaba..eba6610 100644
+--- a/infra/prod.env
++++ b/infra/prod.env
+@@ -18,7 +18,7 @@ TILESERVER_JWT_ALLOWED_ISSUERS=https://cognito-idp.eu-west-1.amazonaws.com/eu-we
+ # traffic immediately (not pct-gated) — intentional: both A/B cohorts share them.
+ # Collapse flags (USE_FANOUT_COLLAPSE / SINGLE_CAT_COLLAPSE) intentionally OMITTED — stay OFF.
+ TILE_READ_MODEL=cards
+-CARDS_ROLLOUT_PCT=25
++CARDS_ROLLOUT_PCT=100
+ DB_ROUNDTRIP_TELEMETRY=true
+ REF_DATA_CACHE=true
+ IMAGES_SKIP_ATTACHMENTS=true

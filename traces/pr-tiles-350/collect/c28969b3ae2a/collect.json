@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "additions": 1,
+    "author": {
+      "id": "U_kgDOCzPh_A",
+      "is_bot": false,
+      "login": "atlyguy123",
+      "name": ""
+    },
+    "baseRefName": "develop",
+    "body": "# User description\nFinal ramp step (5→25→**100**), criteria-gated rather than calendar-gated per Joshua's pace directive: move at maximum safe speed when the pause buys no new evidence.\n\n**Evidence:** zero errors in either cohort across every probe since the first deploy (24h+ at 5%; re-verified at 25% today — 160 reqs/80 buckets at deploy + periodic probes since). Cohort latency parity-or-better for cards at every check; latest probe: cards p50 101ms / p95 237ms vs legacy p50 104ms / p95 391ms. Split tracking nominal at both steps. Backfill delta-0; sync verified writing; drift fallback active.\n\n**At 100%:** DB load profile improves (small indexed card reads replace 45KB location docs + images N+1). Watch through the next traffic peak: cards responseTimeInMs p95/p99 in morgan logs, 5xx flat, drift warns ~0. **Rollback unchanged and instant: `CARDS_ROLLOUT_PCT=0` + redeploy** (or 25 to step back down).\n\nOne-line diff: `CARDS_ROLLOUT_PCT=25` → `100` in `infra/prod.env`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\n---\n\n# Generated description\nRaise the <code>cards</code> read-model rollout in <code>infra/prod.env</code> from 25% to 100% so production traffic fully uses the new card read path. Keep the existing <code>TILE_READ_MODEL</code>, telemetry, cache, and image-attachment flags in place to support the cards flow.\n\n\n<details><summary>Latest Contributors(0)</summary><table><tr><th>User</th><th>Commit</th><th>Date</th></tr></table></details>\n<sub><a href=\"https://baz.co/changes/stepscode/atly-tileserver/350?tool=ast\">Review this PR on Baz</a> | <a href=\"https://baz.co/agents/baz\">Customize your next review</a></sub>",
+    "changedFiles": 1,
+    "createdAt": "2026-07-27T15:36:55Z",
+    "deletions": 1,
+    "files": [
+      {
+        "path": "infra/prod.env",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "headRefName": "infra/cards-ramp-100",
+    "isDraft": false,
+    "labels": [],
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 350,
+    "reviewRequests": [],
+    "reviews": [
+      {
+        "id": "PRR_kwDOJpNTM88AAAABHW7jrg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-27T15:37:06Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "c28969b3ae2ad9974855a55008924c3c8df7b427"
+        }
+      }
+    ],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:27Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/atly-tileserver/actions/runs/30280859844/job/90026563278",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T15:37:18Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/atly-tileserver/actions/runs/30280845936/job/90026516798",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T15:37:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/atly-tileserver/actions/runs/30280845822/job/90026516313",
+        "name": "Run Tests (20.x)",
+        "startedAt": "2026-07-27T15:37:04Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/atly-tileserver/actions/runs/30280843911/job/90026510364",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T15:37:02Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/atly-tileserver/actions/runs/30280863172/job/90026575529",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T15:37:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T15:37:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://baz.co/sessions/ba577782-cbb1-41b7-9045-57556a0a35f6",
+        "name": "Baz Reviewer",
+        "startedAt": "2026-07-27T15:37:04Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "title": "infra: ramp cards read-model to 100% (final step)",
+    "updatedAt": "2026-07-27T15:57:09Z",
+    "url": "https://github.com/stepscode/atly-tileserver/pull/350"
+  },
+  "review_threads": [],
+  "diff_file": "/home/aviad/mc/traces/pr-tiles-350/collect/c28969b3ae2a/atly-tileserver-350.diff",
+  "signals": {
+    "ci_config_files": [],
+    "serverless_yml": [],
+    "migration_files": [],
+    "test_or_settings_files": [],
+    "payments_files": [],
+    "asset_files": [],
+    "secret_literal_suspects": [],
+    "index_from_code_hits": [],
+    "unawaited_telemetry_suspects": [],
+    "fibery_linked": false,
+    "has_conflicts": false
+  }
+}

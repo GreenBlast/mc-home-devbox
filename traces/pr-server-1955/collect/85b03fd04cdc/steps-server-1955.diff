@@ -1,0 +1,414 @@
+diff --git a/api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js b/api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
+index 750f92fa24..ed8b3e58c2 100644
+--- a/api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
++++ b/api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
+@@ -145,7 +145,10 @@ const resolveNearbyLocationsForSearch = async ({
+             maxTimeMS: RUNTIME_DATABASE_MAX_TIME_MS,
+             signal,
+         }),
+-        services.getCachedActiveGooglePlaceTypesForAtly4(),
++        services.getCachedActiveGooglePlaceTypesForAtly4({
++            signal,
++            maxTimeMS: RUNTIME_DATABASE_MAX_TIME_MS,
++        }),
+     ]);
+     signal?.throwIfAborted();
+     const locations = nearbyLocations.filter((location) => {
+diff --git a/api/businessLogic/onboardingSearch/onboardingSearchSelection.js b/api/businessLogic/onboardingSearch/onboardingSearchSelection.js
+index 70c8262f2a..50d8fd72df 100644
+--- a/api/businessLogic/onboardingSearch/onboardingSearchSelection.js
++++ b/api/businessLogic/onboardingSearch/onboardingSearchSelection.js
+@@ -5,7 +5,7 @@ import {
+ } from './onboardingSearchHighlightCoverage.js';
+ import {evaluateOnboardingSearchCandidates} from './onboardingSearchRuntimeCoverage.js';
+ 
+-const RUNTIME_EVALUATION_TIMEOUT_MS = 10000;
++const RUNTIME_EVALUATION_TIMEOUT_MS = 16000;
+ const LOCAL_RUNTIME_EVALUATION_TIMEOUT_MS = 5000;
+ const LAMBDA_RESPONSE_HEADROOM_MS = 5000;
+ const MANHATTAN_FALLBACK = Object.freeze({
+@@ -121,6 +121,14 @@ const evaluateCandidatesWithTimeout = async ({
+ 
+     let timeoutId;
+     const abortController = new AbortController();
++    const evaluation = Promise.resolve().then(() => evaluateCandidates({
++        searches: generationResult.searches,
++        geo,
++        boundingBox,
++        geocodeAddress,
++        maxDistance,
++        signal: abortController.signal,
++    }));
+     try {
+         const timeout = new Promise((_resolve, reject) => {
+             timeoutId = setTimeout(() => {
+@@ -129,17 +137,14 @@ const evaluateCandidatesWithTimeout = async ({
+                 reject(error);
+             }, timeoutMs);
+         });
+-        return await Promise.race([
+-            evaluateCandidates({
+-                searches: generationResult.searches,
+-                geo,
+-                boundingBox,
+-                geocodeAddress,
+-                maxDistance,
+-                signal: abortController.signal,
+-            }),
+-            timeout,
+-        ]);
++        return await Promise.race([evaluation, timeout]);
++    } catch (error) {
++        if (abortController.signal.aborted) {
++            // Do not overlap a Manhattan retry with the timed-out local work.
++            // Runtime services receive the signal and must settle before control returns.
++            await evaluation.catch(() => {});
++        }
++        throw error;
+     } finally {
+         clearTimeout(timeoutId);
+     }
+@@ -169,7 +174,8 @@ const selectManhattanHero = ({
+     generationResult,
+     manhattanGenerationResult,
+     validations,
+-    hasMissionPreview,
++    missionPreviewOnly,
++    missionPreviewReasonFamily,
+ }) => {
+     const selection = selectOnboardingHero({
+         generationResult: manhattanGenerationResult,
+@@ -180,8 +186,7 @@ const selectManhattanHero = ({
+     }
+ 
+     const generatedCandidateCount = generationResult.searches.length;
+-    const selectedMissionPreview = hasMissionPreview &&
+-        selection.selected_search.candidate_index === generatedCandidateCount;
++    const selectedMissionPreview = missionPreviewOnly;
+     if (selectedMissionPreview) {
+         const nominatedIndex = Number.isInteger(generationResult.primary_search_index) &&
+             generationResult.searches[generationResult.primary_search_index]
+@@ -199,7 +204,7 @@ const selectManhattanHero = ({
+                 selected_index: nominatedIndex,
+                 synthetic_preview_used: true,
+             },
+-        }, 'manhattan_mission_preview');
++        }, missionPreviewReasonFamily);
+     }
+ 
+     return annotateManhattanFallback({
+@@ -229,6 +234,7 @@ const evaluateAndSelectOnboardingHero = async ({
+ 
+     const runtimeEvaluationDeadline = Date.now() + runtimeEvaluationBudgetMs;
+     let localValidations;
++    let localEvaluationFailed = false;
+     try {
+         localValidations = await evaluateCandidatesWithTimeout({
+             generationResult,
+@@ -237,11 +243,14 @@ const evaluateAndSelectOnboardingHero = async ({
+             timeoutMs: Math.min(LOCAL_RUNTIME_EVALUATION_TIMEOUT_MS, runtimeEvaluationBudgetMs),
+         });
+     } catch {
+-        return noHeroSelection({generationResult, reasonFamily: 'runtime_evaluation_error'});
++        localEvaluationFailed = true;
+     }
+ 
+-    const localSelection = selectOnboardingHero({generationResult, validations: localValidations});
+-    if (localSelection.selection_state === 'ready' || !shouldRetryInManhattan(localValidations)) {
++    const localSelection = localEvaluationFailed
++        ? noHeroSelection({generationResult, reasonFamily: 'runtime_evaluation_error'})
++        : selectOnboardingHero({generationResult, validations: localValidations});
++    if (!localEvaluationFailed &&
++        (localSelection.selection_state === 'ready' || !shouldRetryInManhattan(localValidations))) {
+         return localSelection;
+     }
+ 
+@@ -251,10 +260,19 @@ const evaluateAndSelectOnboardingHero = async ({
+     }
+ 
+     const hasMissionPreview = !!(manhattanPreviewSearch?.query && manhattanPreviewSearch?.hook);
+-    const manhattanGenerationResult = hasMissionPreview
++    if (localEvaluationFailed && !hasMissionPreview) {
++        return localSelection;
++    }
++
++    // A Manhattan retry must not spend the remaining Lambda budget evaluating all
++    // generated queries again. The mission preview is deterministic and contains
++    // no private generated text, so validate that single candidate in Manhattan.
++    const missionPreviewOnly = hasMissionPreview;
++    const manhattanGenerationResult = missionPreviewOnly
+         ? {
+             ...generationResult,
+-            searches: [...generationResult.searches, manhattanPreviewSearch],
++            searches: [manhattanPreviewSearch],
++            primary_search_index: 0,
+         }
+         : generationResult;
+     let manhattanValidations;
+@@ -276,7 +294,10 @@ const evaluateAndSelectOnboardingHero = async ({
+         generationResult,
+         manhattanGenerationResult,
+         validations: manhattanValidations,
+-        hasMissionPreview,
++        missionPreviewOnly,
++        missionPreviewReasonFamily: localEvaluationFailed
++            ? 'manhattan_runtime_rescue'
++            : 'manhattan_mission_preview',
+     }) ?? localSelection;
+ };
+ 
+diff --git a/api/businessLogic/smartSearch/smartSearchV3.js b/api/businessLogic/smartSearch/smartSearchV3.js
+index 13e10f15f0..6fc34e4ed4 100644
+--- a/api/businessLogic/smartSearch/smartSearchV3.js
++++ b/api/businessLogic/smartSearch/smartSearchV3.js
+@@ -530,7 +530,7 @@ const searchCategoriesByIntents = async ({
+ 
+     const timeLogger = createMeasureTimeLogger("searchCategoriesByIntents");
+     timeLogger.start("getCategoriesByIntents");
+-    const allActiveCategories = await getAllActivePlaceCategories();
++    const allActiveCategories = await getAllActivePlaceCategories({signal});
+     signal?.throwIfAborted();
+ 
+     const categoriesWithEmbeddingsVector = allActiveCategories.filter(
+diff --git a/api/model/googlePlaceTypes.js b/api/model/googlePlaceTypes.js
+index 8e5174a2e9..1f5940c419 100644
+--- a/api/model/googlePlaceTypes.js
++++ b/api/model/googlePlaceTypes.js
+@@ -3,16 +3,24 @@ import {GooglePlaceType} from "../schema/googlePlaceType.js";
+ 
+ let cachedActiveGooglePlaceTypes = null;
+ 
+-const getCachedActiveGooglePlaceTypesForAtly4 = async () => {
++const getCachedActiveGooglePlaceTypesForAtly4 = async ({signal, maxTimeMS} = {}) => {
++    signal?.throwIfAborted();
+     if (cachedActiveGooglePlaceTypes) {
+         return cachedActiveGooglePlaceTypes;
+     }
+ 
+     await connectToDatabase();
++    signal?.throwIfAborted();
+ 
+-    const activeTypes = await GooglePlaceType.find({active_in_atly_4: true})
++    const query = GooglePlaceType.find({active_in_atly_4: true})
+         .select({place_type: 1, _id: 0})
+         .lean();
++    query.setOptions({
++        ...(maxTimeMS ? {maxTimeMS} : {}),
++        ...(signal ? {signal} : {}),
++    });
++    const activeTypes = await query;
++    signal?.throwIfAborted();
+ 
+     cachedActiveGooglePlaceTypes = new Set(
+         activeTypes
+diff --git a/api/model/placeCategory.js b/api/model/placeCategory.js
+index 6090eb023a..ff2f48d573 100644
+--- a/api/model/placeCategory.js
++++ b/api/model/placeCategory.js
+@@ -5,10 +5,19 @@ import {pickDefinedFields} from "../utils/common.js";
+ import CONSTANTS from "../utils/constants.js";
+ import time from "../utils/time.js";
+ 
+-const getAllActivePlaceCategories = async () => {
++const getAllActivePlaceCategories = async ({signal, maxTimeMS} = {}) => {
++    signal?.throwIfAborted();
+     await connectToDatabase();
++    signal?.throwIfAborted();
+ 
+-    return PlaceCategory.find({active: true}).lean();
++    const query = PlaceCategory.find({active: true}).lean();
++    query.setOptions({
++        ...(maxTimeMS ? {maxTimeMS} : {}),
++        ...(signal ? {signal} : {}),
++    });
++    const categories = await query;
++    signal?.throwIfAborted();
++    return categories;
+ };
+ 
+ // Lean variant for the smart-search fuzzy index: excludes the heavy
+diff --git a/api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js b/api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
+index f6af9d151a..a0f6c10715 100644
+--- a/api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
++++ b/api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js
+@@ -202,6 +202,7 @@ describe('onboarding search runtime evaluators', function () {
+         const abortController = new AbortController();
+         let receivedLocationArgs;
+         let receivedCategorySignal;
++        let receivedGooglePlaceTypesArgs;
+         const enrichmentArgs = [];
+         const result = await evaluateOnboardingSearchCandidate({
+             search: {query: 'laptop cafe'},
+@@ -222,7 +223,10 @@ describe('onboarding search runtime evaluators', function () {
+                         location({id: 'loc-bar', googlePlaceType: 'bar'}),
+                     ];
+                 },
+-                getCachedActiveGooglePlaceTypesForAtly4: async () => new Set(['cafe']),
++                getCachedActiveGooglePlaceTypesForAtly4: async (args) => {
++                    receivedGooglePlaceTypesArgs = args;
++                    return new Set(['cafe']);
++                },
+                 getLocationReviewCategoriesByLocationIds: async (args) => {
+                     enrichmentArgs.push(args);
+                     return [];
+@@ -257,6 +261,10 @@ describe('onboarding search runtime evaluators', function () {
+             maxTimeMS: 4000,
+             signal: abortController.signal,
+         });
++        expect(receivedGooglePlaceTypesArgs).to.deep.equal({
++            maxTimeMS: 4000,
++            signal: abortController.signal,
++        });
+         expect(result.search_resolution_failed).to.equal(false);
+         expect(result.places).to.have.length(1);
+         expect(result.places[0].location_id).to.equal('loc-cafe');
+diff --git a/api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js b/api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js
+index 128e22304b..672010e91d 100644
+--- a/api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js
++++ b/api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js
+@@ -1,4 +1,5 @@
+ import {expect} from 'chai';
++import sinon from 'sinon';
+ 
+ import {buildManhattanMissionPreview} from '../../../../businessLogic/onboardingSearch/onboardingSearchGeneration.js';
+ import {
+@@ -62,6 +63,7 @@ describe('onboarding hero selection', function () {
+     });
+ 
+     it('reserves five seconds of Lambda headroom after generation', function () {
++        expect(RUNTIME_EVALUATION_TIMEOUT_MS).to.equal(16000);
+         expect(LAMBDA_RESPONSE_HEADROOM_MS).to.equal(5000);
+         expect(getRuntimeEvaluationBudgetMs(() => 30000)).to.equal(RUNTIME_EVALUATION_TIMEOUT_MS);
+         expect(getRuntimeEvaluationBudgetMs(() => 9000)).to.equal(4000);
+@@ -199,7 +201,7 @@ describe('onboarding hero selection', function () {
+         let callCount = 0;
+         const result = await evaluateAndSelectOnboardingHero({
+             generationResult: generationResult({primary_search_index: 2}),
+-            geo: {lat: 41.3874, lon: 2.1686},
++            geo: {lat: 0, lon: 0},
+             manhattanPreviewSearch: {
+                 query: 'Dog-friendly restaurants',
+                 hook: 'A Manhattan preview shaped by how you explore with your dog.',
+@@ -210,13 +212,8 @@ describe('onboarding hero selection', function () {
+                     expect(searches).to.have.length(3);
+                     return [validation(), validation(), validation()];
+                 }
+-                expect(searches).to.have.length(4);
+-                return [
+-                    validation(),
+-                    validation(),
+-                    validation(),
+-                    validation({passingPlaces: 3}),
+-                ];
++                expect(searches).to.have.length(1);
++                return [validation({passingPlaces: 3})];
+             },
+         });
+ 
+@@ -256,18 +253,102 @@ describe('onboarding hero selection', function () {
+         expect(result.selection_state).to.equal('no_qualifying_hero');
+     });
+ 
+-    it('fails closed without starting Manhattan after a local runtime failure', async function () {
++    it('settles aborted local work before starting the Manhattan rescue', async function () {
++        const clock = sinon.useFakeTimers();
++        let callCount = 0;
++        let activeLocalEvaluations = 0;
++        let overlappedLocalWork = false;
++        try {
++            const resultPromise = evaluateAndSelectOnboardingHero({
++                generationResult: generationResult(),
++                geo: {lat: 0, lon: 0},
++                runtimeEvaluationBudgetMs: 6000,
++                manhattanPreviewSearch: {
++                    query: 'Laptop-friendly coffee shops',
++                    hook: 'A Manhattan preview shaped by how you like to work.',
++                },
++                evaluateCandidates: async ({signal}) => {
++                    callCount += 1;
++                    if (callCount === 1) {
++                        activeLocalEvaluations += 1;
++                        return new Promise((_resolve, reject) => {
++                            signal.addEventListener('abort', () => {
++                                setTimeout(() => {
++                                    activeLocalEvaluations -= 1;
++                                    reject(signal.reason);
++                                }, 25);
++                            }, {once: true});
++                        });
++                    }
++                    overlappedLocalWork = activeLocalEvaluations > 0;
++                    return [validation({passingPlaces: 3})];
++                },
++            });
++
++            await clock.tickAsync(5025);
++            const result = await resultPromise;
++
++            expect(callCount).to.equal(2);
++            expect(overlappedLocalWork).to.equal(false);
++            expect(result.selection_state).to.equal('ready');
++            expect(result.selection_metadata.reason_family).to.equal('manhattan_runtime_rescue');
++        } finally {
++            clock.restore();
++        }
++    });
++
++    it('rescues a local runtime failure with one quality-gated Manhattan mission preview', async function () {
+         let callCount = 0;
+         const result = await evaluateAndSelectOnboardingHero({
+             generationResult: generationResult(),
+-            geo: {lat: 41.3874, lon: 2.1686},
++            geo: {lat: 0, lon: 0},
++            manhattanPreviewSearch: {
++                query: 'Laptop-friendly coffee shops',
++                hook: 'A Manhattan preview shaped by how you like to work.',
++            },
++            evaluateCandidates: async ({searches, geo}) => {
++                callCount += 1;
++                if (callCount === 1) {
++                    throw new Error('coverage unavailable');
++                }
++                expect(searches).to.deep.equal([{
++                    query: 'Laptop-friendly coffee shops',
++                    hook: 'A Manhattan preview shaped by how you like to work.',
++                }]);
++                expect(geo).to.deep.equal(MANHATTAN_FALLBACK.geo);
++                return [validation({passingPlaces: 3})];
++            },
++        });
++
++        expect(callCount).to.equal(2);
++        expect(result.selection_state).to.equal('ready');
++        expect(result.selected_search.location_mode).to.equal(MANHATTAN_FALLBACK.mode);
++        expect(result.selected_search.location_label).to.equal(MANHATTAN_FALLBACK.label);
++        expect(result.selected_search.search_geo).to.deep.equal(MANHATTAN_FALLBACK.geo);
++        expect(result.selection_metadata.reason_family).to.equal('manhattan_runtime_rescue');
++    });
++
++    it('keeps the quality gate when the Manhattan runtime rescue has weak evidence', async function () {
++        let callCount = 0;
++        const result = await evaluateAndSelectOnboardingHero({
++            generationResult: generationResult(),
++            geo: {lat: 0, lon: 0},
++            manhattanPreviewSearch: {
++                query: 'Laptop-friendly coffee shops',
++                hook: 'A Manhattan preview shaped by how you like to work.',
++            },
+             evaluateCandidates: async () => {
+                 callCount += 1;
+-                throw new Error('coverage unavailable');
++                if (callCount === 1) {
++                    throw new Error('coverage unavailable');
++                }
++                return [validation({passingPlaces: 2, signalCount: 1})];
+             },
+         });
+ 
+-        expect(callCount).to.equal(1);
++        expect(callCount).to.equal(2);
++        expect(result.selection_state).to.equal('no_qualifying_hero');
++        expect(result).to.not.have.property('selected_search');
+         expect(result.selection_metadata.reason_family).to.equal('runtime_evaluation_error');
+     });
+ 

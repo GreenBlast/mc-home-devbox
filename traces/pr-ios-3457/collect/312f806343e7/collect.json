@@ -1,0 +1,1150 @@
+{
+  "meta": {
+    "additions": 22852,
+    "author": {
+      "id": "MDQ6VXNlcjM5OTkxODQ=",
+      "is_bot": false,
+      "login": "8Gaston8",
+      "name": "David Sulitzer"
+    },
+    "baseRefName": "develop",
+    "body": "# iOS 4.36.0 curated release\n\n## Summary\n\n- Prepares iOS `4.36.0` as a curated release from the exact shipped `4.35.5` tag (`1dd9918c00a9c6e40b0a591f0f3fce37c49e2f30`).\n- Includes only the seven authorized iOS PRs below, including `#3419` after Gaston's explicit scope amendment, plus release-only exact-base reconciliation and regression fixes.\n- Keeps all unrelated `develop` work after `4.35.5` excluded. The frozen release branch may therefore remain behind `develop`; it must not be updated by merging `develop`.\n- Current release head: `232a6b2764557b3d756e072cba0e86bce3a97e20` (`0 21` from `4.35.5...origin/release/4.36.0`, and `0 0` against the frozen remote branch).\n- Focused guided-accessibility PR stepscode/steps-ios#3458, long-quiz localization PR #3459, and locale-safe guided-score selector PR #3460 are all merged.\n\n## Frozen scope\n\n| Item | Change | Release evidence |\n| --- | --- | --- |\n| stepscode/steps-ios#3411 | Long Atly Plus onboarding quiz | Exact PR merge diff replayed from `4.35.5`; scoped units and guided-highlight UI proof pass |\n| stepscode/steps-ios#3419 | Design Your Map return chrome | Explicitly authorized prerequisite for `#3436` / `#3437`; launch and safe-off UI proof pass |\n| stepscode/steps-ios#3430 | Short Atly Plus quiz experiment arm | Exact PR merge diff replayed; quiz resolver/unit matrix passes |\n| stepscode/steps-ios#3437 | Guided first-session activation and result highlights | Exact-base reconciliation; deterministic highlight UI proof passes; server contract deployed |\n| stepscode/steps-ios#3436 | Personalized first Home category row | Four deterministic fixture/navigation UI tests and composer units pass |\n| stepscode/steps-ios#3438 | Taller Home search-field experiment | Control and treatment UI tests pass, including keyboard submission and real results |\n| stepscode/steps-ios#3446 | Confirm Stripe trial before account setup | All three deterministic Stripe-confirmation UI cases and focused units pass |\n\nServer release dependencies are already present in production deploy head `d8ebefe337832d68381ffb0f762da8c24eae51db`: stepscode/steps-server#1928, #1858, #1933, #1934, plus transitive guided-search foundation #1913. CircleCI pipeline `50479`, workflow `deploy_esbuild`, job `94308` succeeded at `2026-07-22T13:10:37Z`.\n\n## Deliberately excluded\n\n- Every iOS `develop` commit after `4.35.5` outside the seven authorized merge diffs.\n- Adaptive-quiz / `4.36.1` work.\n- No-trial experiment stepscode/steps-ios#3420 / stepscode/steps-server#1911.\n- Stripe reconciliation stepscode/steps-ios#3427 / stepscode/steps-server#1922.\n- Ambient debug showcases, score-loader/tint/settings work, first-save receipts, and other test seams whose product implementations are not in this release.\n\n## Construction and validation\n\n- `4.35.5` is an ancestor of `232a6b2764557b3d756e072cba0e86bce3a97e20`; `git rev-list --left-right --count 4.35.5...origin/release/4.36.0` is `0 21`.\n- Each included iOS PR was reconstructed from its two-parent merge commit using the isolated whole-PR diff, then reconciled against the exact shipped surface.\n- `git diff --check`, changed-Swift parse, project plist validation, pinned package resolution, generic simulator build, and production `build-for-testing` passed.\n- Complete curated unit matrix: `354 passed, 0 failed`.\n- Post-cleanup affected unit matrix: `55 passed, 0 failed`.\n- Focused deterministic UI matrix: `9 passed, 0 failed`.\n- Broader curated deterministic UI smoke: `13 passed, 0 failed` across guided highlights, all Stripe-confirmation cases, both taller-search arms, four personalized Home fixtures, and three profile/return-chrome cases.\n- Exact merged-head canonical smoke: login passed directly and authenticated Home passed through the documented Doppler-to-test-runner credential bridge, `2/2` across `Release4360FinalMergedCanonicalSmoke.xcresult` and `Release4360FinalMergedHomeSmoke.xcresult`.\n- Exact-head long/short integration matrix: short quiz passed; the complete long-quiz journey exposed three same-root-cause curated accessibility/test-selector gaps. Focused fix PR #3458 restores those seams and passes the full 204.071-second long-quiz → real paywall → guided search → guided place profile → Home cleanup journey with zero failures.\n- Release-PR review audit found a malformed English localization key for the long-quiz `beautiful` atmosphere option. Focused PR #3459 removed the stray leading `+` and merged as `00e54ca7297ecb796b30de5c7d99032224591f64`; plist parsing, exact-key readback (`Beautiful design`), the repository localization check, and diff hygiene pass.\n- Final review then found that `formattedScore()` can use a locale comma while the guided XCUITest selector normalized only a period. Focused PR #3460 normalizes both separators without changing user-visible formatting. It merged at `2026-07-23T15:46:33Z` as `232a6b2764557b3d756e072cba0e86bce3a97e20`. The exact merged head passes the complete 205.428-second long-quiz → real paywall → authenticated guided search → locale-safe scored Place Profile → Home flow, plus scoped SwiftFormat, diff hygiene, and a comma-decimal probe.\n- Taller-search sequence failures were classified as shared simulator state contamination after both control and treatment passed an isolated class rerun, `2/2`.\n- SwiftLint reports zero serious violations in the eight final stabilization files. SwiftFormat reports no new regression; the only findings are the same pre-existing switch-spacing findings in `HomeFlowCoordinator.swift` at the parent commit.\n\nLocal-QA environment:\n\n- Gold master: `Alfred` (`60C1B028-85DC-4793-96DE-F5048C924E34`), preserved and untouched.\n- Release clone: `Alfred QA Clone 20260723-release-4360` (`1E626195-97A5-4C55-B8B0-859827C8FFF8`).\n- The clone is preserved for exact-merged-head inspection. The Computer runtime could not auto-unlock this Mac despite the configured permission, so `simctl` screenshots and the XCUITest attachments were used for the final visual pass. The archived packet contains 41 screenshots; no clipping, missing callout, malformed localization, or layout regression was found. Because this is a UX-heavy release and interactive Computer inspection was unavailable, `HUMAN_PRODUCT_LOOK_RECOMMENDED=true`.\n\n## Release flags\n\n| Flag | Type | Launch state | Safe/off state | Current status | Notes |\n| --- | --- | --- | --- | --- | --- |\n| `mobile_atly_plus_quiz_onboarding` | server experiment | assigned quiz arm | `control` | held OFF/control | development and production have zero rules/targets |\n| `mobile_atly_plus_short_quiz_onboarding` | predecessor server experiment | assigned short arm | `control` | held OFF/control | retained for contract provenance |\n| `mobile_design_your_map_return_chrome_v1` | server kill switch | `true` = personalized return chrome | `false` = legacy chrome | created, held OFF | temporary and server-side only; live iOS `4.36.0.0P` app-facing reads return exact `false` in development and production; final launch timing remains |\n| `mobile_personalized_home_category_row_v1` | server kill switch | `true` = personalized Home row | `false` = stable row only | held OFF/false | zero rules/targets |\n| `mobile_home_taller_search_field_v1` | server experiment | treatment = taller field | control = standard field | held OFF/control | zero rules/targets |\n| `enable_quiz_guided_first_search_activation` | server kill switch | `true` = guided activation | `false` = legacy path | created, held OFF | temporary and server-side only; zero rules/targets; live iOS `4.36.0.0P` app-facing reads return exact `false` in development and production |\n| `gfe_pricing_stripe_checkout_2026` | existing server experiment | production treatment per eligibility | control | existing rollout unchanged | `#3446` does not alter rollout assignment |\n\n### Flags in scope\n\n- `mobile_design_your_map_return_chrome_v1` — the missed provider object has now been created through the approved Doppler-backed path and app-facing safe-off reads pass in both environments; keep OFF until the final production launch decision.\n- `enable_quiz_guided_first_search_activation` — the missed provider object is now created through the approved Doppler-backed experimentation-account path. Safe-off provider and app-facing reads pass in both environments; keep OFF until live Mixpanel exposure proof and the explicit production launch decision.\n- The remaining new quiz/Home/search flags are held dark; final ON/OFF or rollout timing belongs to release/product ownership.\n\n## Instrumentation and experiment audit\n\n| Surface | Contract status | Release decision |\n| --- | --- | --- |\n| Unified long/short quiz | Bounded shared assignment metadata plus eight exact `app_ob_atlyPlusQuiz_*` events are implemented; no raw answer text or precise location is tracked | hold dark/control until live assignment and Mixpanel exposure proof |\n| Personalized Home rows | `app_home_personalized_root_rows_shown` and `app_home_root_category_selected` use bounded source/category/count metadata | hold OFF until live Mixpanel proof and staged rollout decision |\n| Guided first session | Ten bounded lifecycle/result-highlight events are implemented without raw query or highlight text | provider kill switch exists and is held OFF; launch remains dark pending live Mixpanel proof and explicit activation |\n| Taller Home search | Server assignment and intentional client exposure split are implemented; fallback is excluded; search outcome events carry bounded experiment metadata | hold OFF/control pending live exposure/readout |\n| Stripe trial confirmation | Existing GFE success event is source-bounded; account-setup start and link-outcome events match the approved contract | deterministic proof green; real Stripe TestFlight/browser return remains required |\n\n## Release-candidate E2E status\n\n| Regression row(s) | Scenario | Environment | Data/account | Result | Evidence | Remaining risk/blocker |\n| --- | --- | --- | --- | --- | --- | --- |\n| `AUTH-001`, `HMAP-001` | Canonical login entry and authenticated Home | exact merged release head + release QA clone | Doppler-backed QA account | Pass | `Release4360FinalMergedCanonicalSmoke.xcresult` plus `Release4360FinalMergedHomeSmoke.xcresult`, 2/2 | human product-look pass recommended because interactive Computer inspection was unavailable |\n| `ONB-003`, `ONB-005` | Long quiz through guided first-session completion | exact merged release head + production-host app build | deterministic internal-QA hero/result fixture plus Doppler-managed QA authentication | Covered | `Release4360Post3460MergedGuidedFlowDoppler-20260723T160212Z.xcresult`, 205.428s, 1 passed / 0 failed / 0 skipped | real server assignment, live search data, and Mixpanel exposure remain unproven; provider flag is created and held OFF |\n| `ONB-004` | Short quiz through real paywall and existing welcome | exact release build | forced QA assignment | Covered | exact-head integration matrix pass | real server-assigned treatment and live exposure remain unproven |\n| `HMAP-019` | Personalized Home semantic rows | exact release build | four deterministic fixtures | Covered | four UI cases plus composer units | live flag is OFF; production assignment and Mixpanel readout remain unproven |\n| `HMAP-005` | Taller Home search control/treatment | exact release build | forced control and treatment | Covered | isolated class rerun 2/2 | live server assignment/exposure remains held OFF/control |\n| `PAY-025` | Verified Stripe return, relaunch persistence, and account linking | release build + simulator | deterministic verified-return fixture | Deferred | three UI cases and focused units pass | safe real Stripe TestFlight checkout/browser return/relaunch is required |\n| `ANALYTICS-001` | Runtime event and exposure delivery | release build + live Mixpanel | privacy-safe QA run | Blocked | code/spec audit complete | live Mixpanel event/exposure readout has not been supplied |\n\n## Release administration\n\n- Draft release PR: stepscode/steps-ios#3457, tracked in Atly Project #2 as `In Review`, `Critical`, target release `4.36.0`.\n- Focused guided-accessibility PR: stepscode/steps-ios#3458 merged into the frozen branch as `edbf676cd5c6db722ba2cb5c5e95c681e8ac96e5` after exact-head gates passed.\n- Focused localization PR: stepscode/steps-ios#3459 merged as `00e54ca7297ecb796b30de5c7d99032224591f64`; its related release-PR review thread is resolved.\n- Focused locale-safe score-selector PR: stepscode/steps-ios#3460 merged after Baz finished with zero threads, CircleCI and Xcode Cloud green, and the exact-head guided flow green. Merge commit `232a6b2764557b3d756e072cba0e86bce3a97e20`; its release-PR score-locale thread is resolved. On the release PR's current head, Baz is approved and CircleCI `ci_gate` is green. The only red check is the sensitive-scope administrative gate because Aviad has not approved the release PR; it is not a product-code, test, infrastructure, or authentication failure.\n- Fibery release: [iOS - 4.36.0](https://steps.fibery.io/Product_Pipeline_Space/Release/837), unreleased, `What Is New Published = false`.\n- A complete `956/956` Project #2 readback found all 13 frozen-scope issue-backed items with `Target Release = 4.36.0`. Server foundation item stepscode/steps-server#1843 was already `Done`; no Project status was changed during this release-admin pass, and the remaining shipped-version/status transitions stay reserved for `/release-shipped`.\n- In-app What's New is intentionally suppressed for `4.36.0` (`current == nil`), as explicitly confirmed by Gaston.\n- Gaston supplied the public App Store release-note copy verbatim: `Bug fixes and performance improvements.` App Store version `4.36.0` (`d5a4588c-353f-4add-87ec-93ac86805fdd`) was created and reads back in `PREPARE_FOR_SUBMISSION`; its `en-US` `whatsNew` field exactly matches the approved copy. No build is attached and no App Review submission was made.\n- The release-candidate quiet gate passed with two clean polls at `2026-07-23T17:06:37Z` and `2026-07-23T17:11:52Z`, `45m47s` after the latest review/comment/check activity at `2026-07-23T16:26:05Z`. The single final Manual TestFlight then succeeded from exact head `232a6b2764557b3d756e072cba0e86bce3a97e20`: Xcode Cloud run `5ea8f476-c753-4012-8de8-d30ed4529a6a`, workflow build `1563`, App Store Connect build `b3638217-6035-4d31-bf74-175b3a40d373`. It reads back as `4.36.0 (1563)`, `VALID`, `INTERNAL_ONLY`, not expired, `IN_BETA_TESTING`, and concretely present in `App Store Connect Users`; the exact `en-US` TestFlight notes read back successfully. This internal build remains unattached to the App Store version, and no submission was made.\n\n## Documentation drift\n\n- The curated diff includes the eight feature execution plans, `REGRESSION_TESTING_PLAN.md`, and the matching `AtlyUITests/README.md` row map.\n- It changes no `AGENTS.md`, `CLAUDE.md`, `.codex/skills`, or `.github` workflow instructions. No additional durable operator/agent documentation update is needed for the frozen scope.\n- The regression-plan validator named by the plan is absent from both tag `4.35.5` and the curated source union; this remains recorded as a source-surface limitation rather than silently treated as a pass.\n\n## Work item\n\n- PR-only release-admin item. This release PR itself owns the open release lifecycle and must be tracked directly in the Atly project.\n- All feature PRs and their issue-backed or PR-only project items remain the frozen source scope; shipped-version fields are intentionally deferred to `/release-shipped` after Apple approval.\n\n## Remaining release gates\n\n- The fully reviewed focused fix PR #3460 is merged and the smallest meaningful exact-merged-head guided smoke passed, 1/0/0.\n- Complete the remaining release regression rows that require live production analytics or physical-device/TestFlight surfaces. The archived simulator visual packet is clean, with a human product-look pass recommended before shipping.\n- Decide final production launch timing for the return-chrome and guided-activation flags. Both provider objects exist, are server-side only, and have app-facing safe-off readback proven in development and production.\n- Public App Store release-note copy is approved and reads back exactly; the no in-app What's New decision is final.\n- The current-head feedback drain, release quiet window, and single final Manual TestFlight handoff are complete. Gaston can install `4.36.0 (1563)` through the internal `App Store Connect Users` group.\n- `/release-shipped` remains intentionally pending until Apple approval/release.\n",
+    "changedFiles": 212,
+    "createdAt": "2026-07-23T11:21:43Z",
+    "deletions": 1873,
+    "files": [
+      {
+        "path": "AtlyTests/AppDelegateGFEStripeCheckoutReturnTests.swift",
+        "additions": 21,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/AtlyPlusEngagementRecommendationEngineTests.swift",
+        "additions": 4,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/AtlyPlusEngagementRolloutGateTests.swift",
+        "additions": 111,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/AtlyPlusLongQuizViewModelTests.swift",
+        "additions": 653,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyTests/AtlyPlusPersonalizationServiceTests.swift",
+        "additions": 691,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/FollowUpResultsSheetInitialLoadingTests.swift",
+        "additions": 227,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/FollowUpResultsSheetViewModelTests.swift",
+        "additions": 892,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/FollowUpTreeTests.swift",
+        "additions": 9,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/FramingFlowViewModelTests.swift",
+        "additions": 191,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/GroupMapFiltersViewModelTests.swift",
+        "additions": 30,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/MarkerImageTypeSelectedScoreTests.swift",
+        "additions": 77,
+        "deletions": 71,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/NetworkRetryFeatureFlagTests.swift",
+        "additions": 2,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/OnboardingProgressBarVisibilityTests.swift",
+        "additions": 9,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/PaywallEventTests.swift",
+        "additions": 95,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/PaywallIntroOfferCopyTests.swift",
+        "additions": 45,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/PersonalizedHomeCategoryRowComposerTests.swift",
+        "additions": 238,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyTests/PinCardScoreSyncTests.swift",
+        "additions": 4,
+        "deletions": 4,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/PlaceProfileViewModelTests.swift",
+        "additions": 688,
+        "deletions": 169,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/ProfileMenuViewModelSubscriptionRoutingTests.swift",
+        "additions": 285,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/SearchMixpanelJourneyTests.swift",
+        "additions": 26,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/SmartQueriesTests.swift",
+        "additions": 14,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/SmartSearchCategoryAreaTests.swift",
+        "additions": 120,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/TypewriterPlaceholderTextStepperTests.swift",
+        "additions": 11,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/UITestHelperTests.swift",
+        "additions": 587,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/UserNotificationServiceRegressionTests.swift",
+        "additions": 34,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/WhatsNewContentTests.swift",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/WhatsNewPresentationDecisionTests.swift",
+        "additions": 28,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+        "additions": 1278,
+        "deletions": 22,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/ChoiceScreenButtonRegressionTests.swift",
+        "additions": 32,
+        "deletions": 5,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/GFEStripeCheckoutConfirmationTests.swift",
+        "additions": 117,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyUITests/Flows/PersonalizedHomeRootRowsTests.swift",
+        "additions": 183,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyUITests/Flows/ProfileMenuSheetPresentationLocalQATests.swift",
+        "additions": 96,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/RegressionTests.swift",
+        "additions": 37,
+        "deletions": 16,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/ReleaseRegressionScenariosTests.swift",
+        "additions": 5,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/SharedPaywallSocialProofCopyTests.swift",
+        "additions": 0,
+        "deletions": 33,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Helpers/HittableElementWaitingHelper.swift",
+        "additions": 23,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyUITests/Helpers/UITestLaunchHelpers.swift",
+        "additions": 29,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Issue3401TallerHomeSearchFieldLocalQATests.swift",
+        "additions": 138,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "AtlyUITests/PR3245LocalQATests.swift",
+        "additions": 0,
+        "deletions": 63,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "AtlyUITests/README.md",
+        "additions": 25,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "REGRESSION_TESTING_PLAN.md",
+        "additions": 174,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "STEPS.xcodeproj/project.pbxproj",
+        "additions": 20,
+        "deletions": 4,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/Analytics/SearchMixpanelJourney.swift",
+        "additions": 10,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppDelegate.swift",
+        "additions": 11,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/About/AboutAtlyFlowCoordinator.swift",
+        "additions": 0,
+        "deletions": 13,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/AppCoordinator.swift",
+        "additions": 8,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Cards List/Vertical Cards List/ListCardsViewModel.swift",
+        "additions": 2,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Group Map/GroupMapMapViewModel.swift",
+        "additions": 7,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Group Map/Views/Tags View/GroupMapFiltersViewModel.swift",
+        "additions": 15,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/FollowUpController.swift",
+        "additions": 197,
+        "deletions": 4,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/HomeFlowCoordinator.swift",
+        "additions": 564,
+        "deletions": 7,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/HomeMapViewController.swift",
+        "additions": 118,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/HomeMapViewModel.swift",
+        "additions": 2,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/HomeViewController.swift",
+        "additions": 26,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/HomeViewModel.swift",
+        "additions": 10,
+        "deletions": 3,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/PersonalizedHomeCategoryRowComposer.swift",
+        "additions": 411,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/CompactPlaceCardView.swift",
+        "additions": 222,
+        "deletions": 50,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/FollowUpPillsView.swift",
+        "additions": 6,
+        "deletions": 11,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift",
+        "additions": 656,
+        "deletions": 158,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift",
+        "additions": 1190,
+        "deletions": 56,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/GuidedFirstSessionOverlayViews.swift",
+        "additions": 318,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/SearchPillContent.swift",
+        "additions": 27,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/TypewriterPlaceholderView.swift",
+        "additions": 160,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/View/HomeMapPersonalizedLabel.swift",
+        "additions": 76,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/View/HomeProfileAvatarView.swift",
+        "additions": 116,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/WhatsNewPresentationDecision.swift",
+        "additions": 6,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Map/MapViewController.swift",
+        "additions": 42,
+        "deletions": 9,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Map/MapViewModel.swift",
+        "additions": 39,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift",
+        "additions": 3120,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/AtlyPlusShortQuizOnboarding.swift",
+        "additions": 585,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/Framing Flow/FramingFlowView.swift",
+        "additions": 349,
+        "deletions": 177,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/Framing Flow/FramingFlowViewModel.swift",
+        "additions": 111,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/OnboardingFlowCoordinator.swift",
+        "additions": 305,
+        "deletions": 48,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/SignUpFlowFeature/SignUpFlowCoordinator.swift",
+        "additions": 143,
+        "deletions": 31,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/Welcome Stages/OnboardingWelcomeSecondStageView.swift",
+        "additions": 8,
+        "deletions": 16,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/Welcome Stages/OnboardingWelcomeThirdStageView.swift",
+        "additions": 8,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/AtlyPlus Paywall/AtlyPlusPaywallSlideshowItems.swift",
+        "additions": 2,
+        "deletions": 4,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/AtlyPlus Paywall/ImageSlideshowView.swift",
+        "additions": 18,
+        "deletions": 10,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/PaywallAnalyticsContext.swift",
+        "additions": 4,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/PaywallFlowCoordinator.swift",
+        "additions": 3,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/PaywallSuccessView.swift",
+        "additions": 84,
+        "deletions": 23,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Paywall/PaywallViewModel.swift",
+        "additions": 11,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/PlaceProfileSaveRegressionTests.swift",
+        "additions": 57,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/PlaceProfileView.swift",
+        "additions": 22,
+        "deletions": 9,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/PlaceProfileViewModel.swift",
+        "additions": 451,
+        "deletions": 168,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PeopleAreSayingPreviewView.swift",
+        "additions": 5,
+        "deletions": 3,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PlaceProfileContentView.swift",
+        "additions": 201,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PlaceProfileGalleryView.swift",
+        "additions": 30,
+        "deletions": 11,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PlaceProfileInfoHomeView.swift",
+        "additions": 89,
+        "deletions": 64,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PlaceProfileInfoMapView.swift",
+        "additions": 8,
+        "deletions": 18,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceDetails/Views/PlaceProfileSearchContextScoreView.swift",
+        "additions": 0,
+        "deletions": 25,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "Steps/AppFlows/Place Profile/PlaceProfileFlowCoordinator.swift",
+        "additions": 132,
+        "deletions": 12,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Profile Menu/ProfileMenuFlowCoordinator.swift",
+        "additions": 83,
+        "deletions": 23,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Profile Menu/ProfileMenuView.swift",
+        "additions": 57,
+        "deletions": 9,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift",
+        "additions": 137,
+        "deletions": 4,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Profile Menu/Save2AtlyLinkedAccountsView.swift",
+        "additions": 14,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Retention/RetentionFlowCoordinator.swift",
+        "additions": 1,
+        "deletions": 31,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Root/RootViewModel.swift",
+        "additions": 35,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Root/RootViewModelTests.swift",
+        "additions": 66,
+        "deletions": 3,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Whats New/WhatsNewContent.swift",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "headRefName": "release/4.36.0",
+    "isDraft": false,
+    "labels": [
+      {
+        "id": "LA_kwDOJF_Lac8AAAACn76XcA",
+        "name": "baz: pending",
+        "description": "",
+        "color": "ededed"
+      }
+    ],
+    "mergeStateStatus": "DIRTY",
+    "mergeable": "CONFLICTING",
+    "number": 3457,
+    "reviewRequests": [],
+    "reviews": [
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABG-6gRA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T11:26:50Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "bea52c898a72f4665dfd663fb760a7388db6e3a8"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABG_6Oxw",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-07-23T13:39:36Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "00cacad42d57fcd1d7f6c2db313ccfadbdd6f54b"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHAHAXw",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T14:02:42Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "edbf676cd5c6db722ba2cb5c5e95c681e8ac96e5"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHAcyJg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T14:40:24Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "00e54ca7297ecb796b30de5c7d99032224591f64"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHAxAoQ",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-07-23T15:17:41Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "00e54ca7297ecb796b30de5c7d99032224591f64"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHAxLlw",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T15:18:02Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "00e54ca7297ecb796b30de5c7d99032224591f64"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHBBghg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T15:46:49Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "232a6b2764557b3d756e072cba0e86bce3a97e20"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHBFn5Q",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-23T15:55:12Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "DISMISSED",
+        "commit": {
+          "oid": "232a6b2764557b3d756e072cba0e86bce3a97e20"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHEto5A",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-24T02:25:18Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "420f5547d9ad11cccf7d1364746f80617d8ad44d"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHPGBcQ",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-26T01:03:12Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "f4b70be2ef1aae2d54879a00edc83b7dd73e3ec4"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHQ1Jnw",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-26T18:54:34Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "4b1d8d0260d79e6ebcc4cabc45fe336ce41d62e6"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHQ1v_g",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-26T19:00:53Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "4b1d8d0260d79e6ebcc4cabc45fe336ce41d62e6"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHRIYCQ",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-26T22:03:46Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "90fce293a9f94d674f31cedeb5f47d627a32889f"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHTkjig",
+        "author": {
+          "login": "aviadsteps"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "Did not went over it, diff is too big",
+        "submittedAt": "2026-07-27T08:53:25Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "90fce293a9f94d674f31cedeb5f47d627a32889f"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABHUXaEw",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-27T10:38:49Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "312f806343e795b6b8f0695620282892cfc6be20"
+        }
+      }
+    ],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T10:38:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30258852684/job/89953739934",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T10:38:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Atly | Default",
+        "startedAt": "2026-07-27T11:05:04Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://appstoreconnect.apple.com/teams/0d089dbf-0b6f-4d5d-a06e-93e6197101cb/apps/1449597018/ci/builds/a520bc1d-002a-448d-9be1-c12d92e45e19"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T11:04:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://appstoreconnect.apple.com/teams/0d089dbf-0b6f-4d5d-a06e-93e6197101cb/apps/1449597018/ci/builds/a520bc1d-002a-448d-9be1-c12d92e45e19/action/356089d2-7c52-460f-add0-e6585c8f0b56",
+        "name": "Atly | Default | Archive - iOS",
+        "startedAt": "2026-07-27T10:40:56Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T10:47:45Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://baz.co/sessions/74e58e58-4d06-4236-82d0-e6b4769537dc",
+        "name": "Baz Reviewer",
+        "startedAt": "2026-07-27T10:40:12Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "ci/circleci: ci_gate",
+        "startedAt": "2026-07-27T10:38:33Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://circleci.com/gh/stepscode/steps-ios/70856"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T10:38:46Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://github.com/stepscode/steps-ios/actions/runs/30258852684"
+      }
+    ],
+    "title": "Prepare curated iOS 4.36.0 release",
+    "updatedAt": "2026-07-27T10:38:49Z",
+    "url": "https://github.com/stepscode/steps-ios/pull/3457"
+  },
+  "review_threads": [
+    {
+      "isResolved": true,
+      "isOutdated": true,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "StepsModules/Sources/Resources/Strings/Localizable/en.lproj/Localizable.strings",
+            "body": "### Broken localization key\n\n`+\"atly_plus_long_quiz.question.PLUS_ATMOSPHERE_001.option.beautiful.title\"` has a stray leading `+`, so the `beautiful` option resolves a different key and won't get the intended localized title — should we drop the `+` to match the other `atly_plus_long_quiz` entries?\n<!--\n_Finding type:_ `Naming and Typos`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Naming%20and%20Typos&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20StepsModules%2FSources%2FResources%2FStrings%2FLocalizable%2Fen.lproj%2FLocalizable.strings%20around%20line%201312%2C%20the%20localization%20entry%20for%20%60atly_plus_long_quiz.question.PLUS_ATMOSPHERE_001.option.beautiful.title%60%20is%20incorrectly%20prefixed%20with%20a%20stray%20%60%2B%60%2C%20making%20the%20key%20malformed%20and%20causing%20the%20app%20to%20fail%20to%20resolve%20that%20localized%20title.%20Remove%20the%20leading%20%60%2B%60%20so%20the%20key%2Fvalue%20line%20matches%20the%20exact%20key%20format%20used%20by%20the%20other%20%60atly_plus_long_quiz%60%20entries%20in%20this%20block.%20Verify%20that%20%60beautiful.title%60%20now%20resolves%20correctly%20at%20runtime.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nStepsModules/Sources/Resources/Strings/Localizable/en.lproj/Localizable.strings around\nline 1312, the localization entry for\n`atly_plus_long_quiz.question.PLUS_ATMOSPHERE_001.option.beautiful.title` is incorrectly\nprefixed with a stray `+`, making the key malformed and causing the app to fail to\nresolve that localized title. Remove the leading `+` so the key/value line matches the\nexact key format used by the other `atly_plus_long_quiz` entries in this block. Verify\nthat `beautiful.title` now resolves correctly at runtime.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "StepsModules/Sources/Resources/Strings/Localizable/en.lproj/Localizable.strings",
+            "body": "Confirmed against the frozen release branch. Focused fix #3459 removes the stray leading `+` at exact head `449b26ab4accfbf45686ecbc0282169356dc434b`; plist parsing, exact-key readback, SwiftGen config lint, the repository localization check, and diff hygiene pass. I am leaving this thread unresolved until #3459 lands in `release/4.36.0`."
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "StepsModules/Sources/Resources/Strings/Localizable/en.lproj/Localizable.strings",
+            "body": "Commit 00e54ca **addressed** this comment by removing the stray leading `+` from the localization key."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "### Locale-dependent ID breaks selector\n\n`Double.formattedScore()` uses `String(format: \"%.1f\", self)`, so locales with `,` as the decimal separator produce `place_profile_editorial_score_value_9,2` while the test waits for `place_profile_editorial_score_value_9_2` — should we normalize the score with a locale-independent formatter before building the `accessibilityIdentifier`?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=low\" alt=\"Severity\" height=\"24\" /></picture> <picture><img src=\"https://baz.co/api/v2/badges?type=web_search&content=Swift%20Foundation%20%28String%28format%3A%29%20%29\" alt=\"web_search\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20AtlyUITests%2FFlows%2FAtlyPlusOnboardingChromeTests.swift%20around%20lines%20543-546%20%28where%20%60editorialScore%60%20is%20looked%20up%20by%20%60place_profile_editorial_score_value_9_2%60%29%2C%20the%20test%20is%20brittle%20because%20%60formattedScore%28%29%60%20likely%20formats%20doubles%20using%20the%20user%20locale%2C%20producing%20%609%2C2%60%20in%20comma-decimal%20locales%20while%20the%20identifier%20replacement%20only%20converts%20%60.%60%20to%20%60_%60.%20Fix%20by%20updating%20the%20%60Double.formattedScore%28%29%60%20implementation%20to%20use%20a%20fixed%20locale%20%28e.g.%2C%20en_US_POSIX%29%20so%20%609.2%60%20always%20formats%20with%20%60.%60%3B%20alternatively%20or%20additionally%2C%20normalize%20the%20identifier%20generation%20by%20replacing%20both%20%60.%60%20and%20%60%2C%60%20with%20%60_%60.%20After%20that%2C%20ensure%20the%20accessibilityIdentifier%20used%20in%20the%20test%20matches%20the%20normalized%20formatting%20so%20%60waitForExistence%60%20no%20longer%20fails%20under%20different%20locales.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nAtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift around lines 543-546 (where\n`editorialScore` is looked up by `place_profile_editorial_score_value_9_2`), the test is\nbrittle because `formattedScore()` likely formats doubles using the user locale,\nproducing `9,2` in comma-decimal locales while the identifier replacement only converts\n`.` to `_`. Fix by updating the `Double.formattedScore()` implementation to use a fixed\nlocale (e.g., en_US_POSIX) so `9.2` always formats with `.`; alternatively or\nadditionally, normalize the identifier generation by replacing both `.` and `,` with\n`_`. After that, ensure the accessibilityIdentifier used in the test matches the\nnormalized formatting so `waitForExistence` no longer fails under different locales.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Confirmed against Apple formatting semantics and the frozen release code: the displayed score may use a comma decimal separator, while the accessibility identifier normalized only dots. Focused release fix #3460 normalizes both `.` and `,` without changing user-visible formatting. Its exact head is `2d4c68837213072f80d66309dd2be29f8c053ce7`; SwiftFormat/diff hygiene pass and the full production-scheme long quiz → paywall → guided Place Profile → Home journey passed 1/1 in 209.420s. Leaving this thread unresolved until #3460 lands in `release/4.36.0`."
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Thanks for the clarification — that makes sense. I’ll save this to memory once the PR is merged."
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Commit 232a6b2 **addressed** this comment by normalizing both periods and commas in the score accessibility identifier, while preserving the user-visible formatted score."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/AtlyPlusPersonalizationService.swift",
+            "body": "### Restore can erase home preview\n\n`restoreHomeQuizPersonalizationAfterInternalQA()` treats `hasBackup` as success, so a missing/corrupt or schema-mismatched `backup` still overwrites `homeQuizPersonalization` and returns `true`; that makes `resetRelease436QAState()` skip its fallback cleanup and can leave the valid preview state unrecovered, so personalization doesn't render. Should we only return success after a non-`nil`, supported decode and otherwise fall through to cleanup?\n<!--\n_Finding type:_ `Type Inconsistency`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Type%20Inconsistency&severity=medium\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FServices%2FAtlyPlusPersonalizationService.swift%20around%20lines%20238-250%2C%20in%20%60restoreHomeQuizPersonalizationAfterInternalQA%28%29%60%2C%20stop%20restoring%20solely%20based%20on%20%60hasBackup%60%3B%20after%20reading%20%60backup%60%20from%20%60Key.internalQAHomeQuizPersonalizationBackup%60%2C%20guard%20that%20the%20decoded%20value%20is%20non-nil%20and%20has%20a%20supported%20schema%20%28e.g.%2C%20%60backup.isSupportedSchema%20%3D%3D%20true%60%29%20before%20calling%20%60setHomeQuizPersonalization%28backup%29%60.%20If%20%60backup%60%20is%20nil%20or%20unsupported%2Fcorrupted%2C%20do%20not%20overwrite%20the%20current%20%60homeQuizPersonalization%60%2C%20clear%20the%20backup%20marker%2Fpayload%20keys%20as%20appropriate%2C%20and%20return%20%60false%60%20so%20%60resetRelease436QAState%28%29%60%20can%20run%20its%20fallback%20cleanup.%20Also%20adjust%20%60AtlyPlusHomeQuizPersonalization%60%E2%80%99s%20decoding%20%28e.g.%2C%20its%20%60init%28from%3A%29%60%29%20to%20reject%20or%20surface%20schema%2Fversion%20mismatches%20instead%20of%20silently%20defaulting%20to%20schemaVersion%200%20%2F%20experimentVariant%20%22unknown%22%2C%20so%20unsupported%20payloads%20cannot%20be%20treated%20as%20%E2%80%9Crestorable%E2%80%9D%20by%20this%20method.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/Services/AtlyPlusPersonalizationService.swift around lines 238-250, in\n`restoreHomeQuizPersonalizationAfterInternalQA()`, stop restoring solely based on\n`hasBackup`; after reading `backup` from `Key.internalQAHomeQuizPersonalizationBackup`,\nguard that the decoded value is non-nil and has a supported schema (e.g.,\n`backup.isSupportedSchema == true`) before calling `setHomeQuizPersonalization(backup)`.\nIf `backup` is nil or unsupported/corrupted, do not overwrite the current\n`homeQuizPersonalization`, clear the backup marker/payload keys as appropriate, and\nreturn `false` so `resetRelease436QAState()` can run its fallback cleanup. Also adjust\n`AtlyPlusHomeQuizPersonalization`’s decoding (e.g., its `init(from:)`) to reject or\nsurface schema/version mismatches instead of silently defaulting to schemaVersion 0 /\nexperimentVariant \"unknown\", so unsupported payloads cannot be treated as\n“restorable” by this method.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/AtlyPlusPersonalizationService.swift",
+            "body": "### Stale marker after crash\n\nIn `restoreHomeQuizPersonalizationAfterInternalQA()`, the two backup keys are cleared in separate `codableStorage.setCodable(...)` calls, so an interruption can leave `hasInternalQAHomeQuizPersonalizationBackup == true` with a missing payload and the next restore overwrites `homeQuizPersonalization` with `nil` — should we clear them atomically?\n<!--\n_Finding type:_ `Type Inconsistency`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Type%20Inconsistency&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FServices%2FAtlyPlusPersonalizationService.swift%20around%20lines%20237-251%2C%20in%20%60restoreHomeQuizPersonalizationAfterInternalQA%28%29%60%2C%20the%20final%20cleanup%20clears%20%60internalQAHomeQuizPersonalizationBackup%60%20%28sets%20it%20to%20nil%29%20and%20then%20clears%20%60hasInternalQAHomeQuizPersonalizationBackup%60%20%28sets%20it%20to%20false%29%20with%20two%20separate%20non-atomic%20writes.%20Refactor%20the%20cleanup%20so%20the%20marker%20is%20set%20to%20false%20first%20%28or%20use%20a%20single%20persisted%20object%2Ftransaction-like%20write%20that%20updates%20both%20together%29%2C%20so%20an%20interruption%20can%E2%80%99t%20leave%20%60has...%20%3D%3D%20true%60%20while%20the%20payload%20is%20missing.%20Also%20update%20the%20restore%20path%20to%20guard%20that%20the%20decoded%20backup%20payload%20is%20non-nil%20before%20calling%20%60setHomeQuizPersonalization%60%3B%20if%20it%E2%80%99s%20nil%2C%20clear%20the%20marker%20and%20return%20false.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/Services/AtlyPlusPersonalizationService.swift around lines 237-251, in\n`restoreHomeQuizPersonalizationAfterInternalQA()`, the final cleanup clears\n`internalQAHomeQuizPersonalizationBackup` (sets it to nil) and then clears\n`hasInternalQAHomeQuizPersonalizationBackup` (sets it to false) with two separate\nnon-atomic writes. Refactor the cleanup so the marker is set to false first (or use a\nsingle persisted object/transaction-like write that updates both together), so an\ninterruption can’t leave `has... == true` while the payload is missing. Also update\nthe restore path to guard that the decoded backup payload is non-nil before calling\n`setHomeQuizPersonalization`; if it’s nil, clear the marker and return false.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": true,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Onboarding/AtlyPlusShortQuizOnboarding.swift",
+            "body": "### Locale-invariant score decimal\n\n`AtlyPlusQuizPersuasionPrelude.makeSenseArt` hardcodes `Text(\"9.7 \")` while the rest of the app uses `Double.formattedScore()`, so locales that render `9,7` will show a different score here and the UI will look inconsistent — can we use `Text(\"\\(9.7.formattedScore()) \")` instead?\n<!--\n_Finding type:_ `AI Coding Guidelines`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=AI%20Coding%20Guidelines&severity=low\" alt=\"Severity\" height=\"24\" /></picture> <picture><img src=\"https://baz.co/api/v2/badges?type=web_search&content=Swift%20Foundation%20String%28format%3A%29\" alt=\"web_search\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz) You can also update your AI coding guidelines based on this comment by `apply pr to [branch name]`\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppFlows%2FOnboarding%2FAtlyPlusShortQuizOnboarding.swift%20around%20lines%20705-708%20inside%20%60AtlyPlusQuizPersuasionPrelude.makeSenseArt%60%2C%20the%20score%20label%20is%20hardcoded%20as%20%60Text%28%229.7%20%22%29%60%2C%20which%20bypasses%20the%20app%E2%80%99s%20locale-aware%20%60Double.formattedScore%28%29%60%20formatting%20%28used%20elsewhere%29.%20Refactor%20this%20to%20use%20the%20same%20formatting%20logic%20as%20the%20rest%20of%20the%20UI%20%28e.g.%2C%20format%20the%20numeric%20value%20via%20%609.7.formattedScore%28%29%60%20and%20include%20the%20trailing%20space%29%2C%20so%20locales%20with%20%60%2C%60%20decimal%20separators%20render%20consistently.%20Verify%20the%20resulting%20layout%2Fspacing%20still%20matches%20the%20surrounding%20HStack%20text%20sizing.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppFlows/Onboarding/AtlyPlusShortQuizOnboarding.swift around lines 705-708 inside\n`AtlyPlusQuizPersuasionPrelude.makeSenseArt`, the score label is hardcoded as `Text(\"9.7\n\")`, which bypasses the app’s locale-aware `Double.formattedScore()` formatting (used\nelsewhere). Refactor this to use the same formatting logic as the rest of the UI (e.g.,\nformat the numeric value via `9.7.formattedScore()` and include the trailing space), so\nlocales with `,` decimal separators render consistently. Verify the resulting\nlayout/spacing still matches the surrounding HStack text sizing.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Onboarding/AtlyPlusShortQuizOnboarding.swift",
+            "body": "Commit 4b1d8d0 **addressed** this comment by deleting the old `makeSenseArt` implementation containing the hardcoded `Text(\"9.7 \")`. The flow now uses `FramingFlowQuizPrelude`, so the flagged literal is no longer present."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/AtlyPlusPersonalizationService.swift",
+            "body": "### Preserved release-436 loses Home restore\n\n`eraseCachedData()` clears `internalQAHomeQuizPersonalizationBackup` and `hasInternalQAHomeQuizPersonalizationBackup` even when `preserveRelease436Backup` is set, so `restoreHomeQuizPersonalizationAfterInternalQA()` returns `false` after a nested reset and the tester's genuine Home personalization can't be restored — should we preserve those fields too when `preserveRelease436Backup` is `true`?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=medium\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FServices%2FAtlyPlusPersonalizationService.swift%20around%20lines%20161-188%20inside%20%60eraseCachedData%28%29%60%2C%20the%20code%20currently%20preserves%20only%20%60release436InternalQAStateBackup%60%20when%20%60preserveRelease436Backup%60%20is%20true%2C%20but%20it%20also%20unconditionally%20clears%20the%20older%20Home%20internal-QA%20backup%20%28%60internalQAHomeQuizPersonalizationBackup%60%2F%60hasInternalQAHomeQuizPersonalizationBackup%60%29.%20Refactor%20%60eraseCachedData%28%29%60%20so%20that%20clearing%20%60internalQAHomeQuizPersonalizationBackup%60%20and%20setting%20%60hasInternalQAHomeQuizPersonalizationBackup%60%20to%20false%20is%20also%20conditional%20on%20%60%21preserveRelease436Backup%60%20%28or%20otherwise%20included%20in%20the%20same%20preserve%20branch%29.%20Ensure%20the%20preserve%20flag%20is%20still%20reset%20as%20intended%2C%20but%20the%20Home%20backup%20remains%20intact%20when%20release-436%20nested%20QA%20restoration%20is%20expected.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/Services/AtlyPlusPersonalizationService.swift around lines 161-188 inside\n`eraseCachedData()`, the code currently preserves only `release436InternalQAStateBackup`\nwhen `preserveRelease436Backup` is true, but it also unconditionally clears the older\nHome internal-QA backup\n(`internalQAHomeQuizPersonalizationBackup`/`hasInternalQAHomeQuizPersonalizationBackup`).\nRefactor `eraseCachedData()` so that clearing `internalQAHomeQuizPersonalizationBackup`\nand setting `hasInternalQAHomeQuizPersonalizationBackup` to false is also conditional on\n`!preserveRelease436Backup` (or otherwise included in the same preserve branch). Ensure\nthe preserve flag is still reset as intended, but the Home backup remains intact when\nrelease-436 nested QA restoration is expected.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/AtlyPlusPersonalizationService.swift",
+            "body": "### Split QA backup lifecycle\n\n`captureRelease436StateForInternalQA` repeats the same backup/restore lifecycle as `captureHomeQuizPersonalizationForInternalQA` and `restoreHomeQuizPersonalizationAfterInternalQA`, so the QA-state logic can drift when erase or persistence behavior changes — should we factor the shared storage lifecycle into a small private helper and keep only the payload-specific fields local?\n<!--\n_Finding type:_ `Code Dedup and Conventions`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Code%20Dedup%20and%20Conventions&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Onboarding/SignUpFlowFeature/SignUpFlowCoordinator.swift",
+            "body": "### Wrong likes region from stale location\n\n`resolvedViewportForLikesStep()` reads `userLocationProvider.currentState.userLocation.coordinate` right after `userLocationProvider.refreshState()`, so the likes viewport can still be built from the cached country/default location and onboarding loads the wrong region before the GPS fix arrives — should we wait for the refresh or recompute the viewport when location updates?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=high\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppFlows%2FOnboarding%2FSignUpFlowFeature%2FSignUpFlowCoordinator.swift%20around%20lines%20373-378%2C%20the%20resolvedViewportForLikesStep%28%29%20logic%20calls%20userLocationProvider.refreshState%28%29%20and%20then%20immediately%20reads%20userLocationProvider.currentState.userLocation.coordinate.%20Refactor%20this%20method%20so%20it%20does%20not%20build%20the%20viewport%20from%20the%20potentially%20stale%20cached%2Fcountry%20fallback%E2%80%94after%20triggering%20refresh%2C%20explicitly%20wait%20for%20the%20provider%20to%20update%20to%20the%20newly%20found%20GPS%20coordinate%20%28e.g.%2C%20reuse%20the%20prior%20waitUntilUserLocationWillBeFound%20flow%20or%20add%20an%20async%20refresh%20API%20that%20returns%20the%20updated%20coordinate%29%2C%20with%20a%20reasonable%20timeout%2Ffallback.%20Ensure%20the%20likes%20viewport%20is%20derived%20from%20the%20final%20resolved%20location%20before%20returning.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppFlows/Onboarding/SignUpFlowFeature/SignUpFlowCoordinator.swift around lines\n373-378, the resolvedViewportForLikesStep() logic calls\nuserLocationProvider.refreshState() and then immediately reads\nuserLocationProvider.currentState.userLocation.coordinate. Refactor this method so it\ndoes not build the viewport from the potentially stale cached/country fallback—after\ntriggering refresh, explicitly wait for the provider to update to the newly found GPS\ncoordinate (e.g., reuse the prior waitUntilUserLocationWillBeFound flow or add an async\nrefresh API that returns the updated coordinate), with a reasonable timeout/fallback.\nEnsure the likes viewport is derived from the final resolved location before returning.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyTests/FollowUpResultsSheetViewModelTests.swift",
+            "body": "### Test name misstates exercised behavior\n\n`testShouldRestoreUserLocationAfterGuidedSearchFailure` claims to cover guided-search failure restoration, but it only calls `shouldRestoreUserLocationAfterGuidedSearchFailure` synchronously and never triggers a failure or navigation, so the name is misleading — should we rename it to something like `testShouldRestoreUserLocationAfterGuidedSearchFailureRequiresSubmittingValidCoveragePreview`?\n<!--\n_Finding type:_ `Naming and Typos`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Naming%20and%20Typos&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20AtlyTests%2FFollowUpResultsSheetViewModelTests.swift%20around%20lines%20122-150%2C%20rename%20%60testGuidedSearchFailureRestoresUserLocationOnlyForAValidCoveragePreview%60%20to%20accurately%20describe%20what%20is%20being%20tested%3A%20the%20boolean%20decision%20from%20%60FollowUpResultsSheetViewModel.shouldRestoreUserLocationAfterGuidedSearchFailure%60.%20The%20body%20only%20synchronously%20asserts%20this%20predicate%20for%20a%20valid%20preview%20hero%2C%20a%20completed%20state%2C%20and%20a%20nil%20hero%E2%80%94so%20change%20the%20name%20to%20something%20like%20%60testShouldRestoreUserLocationAfterGuidedSearchFailureRequiresSubmittingValidCoveragePreview%60.%20Ensure%20the%20new%20name%20reflects%20%E2%80%9Cdecision%2Fpredicate%E2%80%9D%20semantics%20and%20does%20not%20imply%20the%20test%20triggers%20an%20actual%20guided%20search%20failure%20or%20restoration%2Fnavigation%20behavior.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nAtlyTests/FollowUpResultsSheetViewModelTests.swift around lines 122-150, rename\n`testGuidedSearchFailureRestoresUserLocationOnlyForAValidCoveragePreview` to accurately\ndescribe what is being tested: the boolean decision from\n`FollowUpResultsSheetViewModel.shouldRestoreUserLocationAfterGuidedSearchFailure`. The\nbody only synchronously asserts this predicate for a valid preview hero, a completed\nstate, and a nil hero—so change the name to something like\n`testShouldRestoreUserLocationAfterGuidedSearchFailureRequiresSubmittingValidCoveragePreview`.\nEnsure the new name reflects “decision/predicate” semantics and does not imply the\ntest triggers an actual guided search failure or restoration/navigation behavior.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Home/HomeFlowCoordinator.swift",
+            "body": "### Restore branch overrides auto-recenter\n\n`.restoreUserLocation` always calls `allowAutoRecenterOnSheetChanges()` and `centerAndShowUserLocation`, so guided preview restore can re-enable auto-recentering even when `disableAutoRecenterForAreaNavigation()` had intentionally turned it off — should we restore the previous `shouldAutoRecenterOnSheetChanges` value instead? The restore branch also cancels `pendingSheetLoweringCompletion` but not `pendingSheetRecenterWorkItem`, so a queued recenter can fire after `centerAndShowUserLocation` and move the camera again — should we cancel that work item too?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=medium\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppFlows%2FHome%2FHomeFlowCoordinator.swift%20around%20lines%202222-2228%20in%20the%20%60case%20.restoreUserLocation%60%20branch%2C%20fix%20the%20restore%20logic%20so%20it%20does%20not%20permanently%20enable%20auto-recentering%20and%20it%20prevents%20any%20queued%20recenter%20work%20from%20firing%20after%20the%20restore.%20Refactor%20to%20preserve%2Frestore%20the%20previous%20%60shouldAutoRecenterOnSheetChanges%60%20value%20%28the%20one%20that%20was%20turned%20off%20by%20%60disableAutoRecenterForAreaNavigation%28%29%60%20for%20guided%20preview%2Farea%20navigation%29%20instead%20of%20unconditionally%20calling%20%60allowAutoRecenterOnSheetChanges%28%29%60.%20Also%20cancel%20%60pendingSheetRecenterWorkItem%60%20%28in%20addition%20to%20%60pendingSheetLoweringCompletion%60%29%20or%20add%20a%20guard%20so%20the%20work%20item%20cannot%20execute%20after%20the%20restore%20branch%20schedules%20%60centerAndShowUserLocation%60.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppFlows/Home/HomeFlowCoordinator.swift around lines 2222-2228 in the `case\n.restoreUserLocation` branch, fix the restore logic so it does not permanently enable\nauto-recentering and it prevents any queued recenter work from firing after the restore.\nRefactor to preserve/restore the previous `shouldAutoRecenterOnSheetChanges` value (the\none that was turned off by `disableAutoRecenterForAreaNavigation()` for guided\npreview/area navigation) instead of unconditionally calling\n`allowAutoRecenterOnSheetChanges()`. Also cancel `pendingSheetRecenterWorkItem` (in\naddition to `pendingSheetLoweringCompletion`) or add a guard so the work item cannot\nexecute after the restore branch schedules `centerAndShowUserLocation`.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": false,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyTests/AtlyPlusPersonalizationServiceTests.swift",
+            "body": "### Misleading selector-only unit test\n\n`testGuidedFirstSessionUsesLogTestOnlyOutsideTheAppStore` only checks `GuidedFirstSession.requestConfiguration(isAppStore:)`, so the `path` and `header` never get validated against the real `ApiClient.postWithModelResponse` call in `GuidedFirstSessionService` — could we extend it with a spied `ApiClient` requester to assert both `isAppStore` branches?\n<!--\n_Finding type:_ `AI Coding Guidelines`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=AI%20Coding%20Guidelines&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz) You can also update your AI coding guidelines based on this comment by `apply pr to [branch name]`\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20AtlyTests%2FAtlyPlusPersonalizationServiceTests.swift%20around%20lines%2082-91%2C%20in%20%60testGuidedFirstSessionUsesLogTestOnlyOutsideTheAppStore%60%2C%20stop%20asserting%20only%20%60GuidedFirstSession.requestConfiguration%28isAppStore%3A%29%60.%20Instead%2C%20use%20the%20requester-injection%20initializer%20for%20%60GuidedFirstSessionService%60%20%28matching%20the%20pattern%20used%20by%20the%20existing%20guided-session%20tests%29%20and%20provide%20a%20spy%2Fmock%20%60ApiClient%60%20or%20requester%20that%20captures%20the%20%60postWithModelResponse%60%20call.%20Trigger%20the%20actual%20guided%20first%20session%20request%20for%20both%20%60isAppStore%3A%20false%60%20and%20%60isAppStore%3A%20true%60%2C%20then%20assert%20the%20captured%20request%20%60path%60%2Fheaders%20exactly%20match%20%60logTest%60%20%2B%20%60x-atly-logtest-probe%3A%20guided-manhattan-fallback%60%20for%20the%20non-App%20Store%20case%20and%20%60atly%2Fonboarding%2Fsearch-generation%60%20with%20nil%20headers%20for%20the%20App%20Store%20case.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nAtlyTests/AtlyPlusPersonalizationServiceTests.swift around lines 82-91, in\n`testGuidedFirstSessionUsesLogTestOnlyOutsideTheAppStore`, stop asserting only\n`GuidedFirstSession.requestConfiguration(isAppStore:)`. Instead, use the\nrequester-injection initializer for `GuidedFirstSessionService` (matching the pattern\nused by the existing guided-session tests) and provide a spy/mock `ApiClient` or\nrequester that captures the `postWithModelResponse` call. Trigger the actual guided\nfirst session request for both `isAppStore: false` and `isAppStore: true`, then assert\nthe captured request `path`/headers exactly match `logTest` + `x-atly-logtest-probe:\nguided-manhattan-fallback` for the non-App Store case and\n`atly/onboarding/search-generation` with nil headers for the App Store case.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyTests/AtlyPlusPersonalizationServiceTests.swift",
+            "body": "Commit 312f806 **addressed** this comment by removing the selector-only test entirely, eliminating the misleading coverage."
+          }
+        ]
+      }
+    }
+  ],
+  "diff_file": "/home/aviad/mc/traces/pr-ios-3457/collect/312f806343e7/steps-ios-3457.diff",
+  "signals": {
+    "ci_config_files": [],
+    "serverless_yml": [],
+    "migration_files": [],
+    "test_or_settings_files": [],
+    "payments_files": [
+      "AtlyTests/AppDelegateGFEStripeCheckoutReturnTests.swift",
+      "AtlyTests/ProfileMenuViewModelSubscriptionRoutingTests.swift",
+      "AtlyUITests/Flows/GFEStripeCheckoutConfirmationTests.swift"
+    ],
+    "asset_files": [],
+    "secret_literal_suspects": [],
+    "index_from_code_hits": [],
+    "unawaited_telemetry_suspects": [],
+    "fibery_linked": true,
+    "has_conflicts": true
+  }
+}

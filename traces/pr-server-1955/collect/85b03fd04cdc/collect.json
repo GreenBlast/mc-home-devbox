@@ -1,0 +1,287 @@
+{
+  "meta": {
+    "additions": 171,
+    "author": {
+      "id": "MDQ6VXNlcjM5OTkxODQ=",
+      "is_bot": false,
+      "login": "8Gaston8",
+      "name": "David Sulitzer"
+    },
+    "baseRefName": "develop",
+    "body": "# User description\nFollow-up to #1952 for the 4.36.0 guided-first-search launch blocker.\n\nProduction diagnosis\n- The current production Lambda returns `runtime_evaluation_error`: the five-second local coverage window expires before Manhattan is attempted.\n- This is not an insufficient-results, insufficient-source-evidence, or Manhattan-coverage miss.\n\nRepair\n- Preserve five seconds of Lambda response headroom while allowing a bounded 16-second evaluation phase.\n- After a local runtime failure, evaluate one deterministic mission preview in Manhattan.\n- Never retry private generated query or journey text.\n- Return Manhattan markers only when the existing editorial/source quality gate passes; otherwise keep `no_qualifying_hero`.\n\nProof\n- Node 20 targeted ESLint: pass.\n- 45 adjacent unit/handler tests: pass.\n- New regressions cover uncovered location -> quality-gated Manhattan ready and weak-evidence refusal.\n\nRelease order\n1. Current-head Baz review and CI clean.\n2. Merge this exact fix.\n3. Deploy only `onboardingSearchGeneration` to production through the approved deployer.\n4. Prove the real production happy, invalid, auth, and safe paths.\n5. Only then enable `enable_quiz_guided_first_search_activation`.\n\n`mobile_atly_plus_quiz_onboarding` allocation and App Store 4.36.0 are intentionally untouched.\n\n---\n\n# Generated description\nRestore <code>onboardingSearchSelection</code> so local hero evaluation keeps five seconds of Lambda headroom, then retries a single deterministic Manhattan mission preview only after a local runtime failure or timeout. Thread abort and <code>maxTimeMS</code> through <code>onboardingSearchRuntimeCoverage</code>, <code>googlePlaceTypes</code>, <code>placeCategory</code>, and <code>smartSearchV3</code> so the database-backed coverage lookups stop cleanly during guided onboarding search.\n<table><tr><th>Topic</th><th>Details</th><tr><td><a href=https://baz.co/changes/stepscode/steps-server/1955?tool=ast&topic=Manhattan+rescue>Manhattan rescue</a>\n        </td><td>Restore the guided onboarding hero flow by extending local evaluation to 16 seconds, then rescuing timed-out runs with one Manhattan mission preview while preserving the quality gate and fail-closed behavior.<details><summary>Modified files (2)</summary><ul><li>api/businessLogic/onboardingSearch/onboardingSearchSelection.js</li>\n<li>api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js</li></ul></details><details><summary>Latest Contributors(2)</summary><table><tr><th>User</th><th>Commit</th><th>Date</th></tr><tr><td>davidsulitzer@icloud.com</td><td>fix(onboarding): settl...</td><td>July 27, 2026</td></tr>\n<tr><td>aviad@steps.me</td><td>1924-1930: Adding tests</td><td>July 22, 2026</td></tr></table></details></td></tr>\n<tr><td><a href=https://baz.co/changes/stepscode/steps-server/1955?tool=ast&topic=Abortable+lookups>Abortable lookups</a>\n        </td><td>Propagate cancellation and query limits into nearby-location, category, and Google place-type lookups so runtime coverage work can abort before it eats Lambda headroom.<details><summary>Modified files (5)</summary><ul><li>api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js</li>\n<li>api/businessLogic/smartSearch/smartSearchV3.js</li>\n<li>api/model/googlePlaceTypes.js</li>\n<li>api/model/placeCategory.js</li>\n<li>api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js</li></ul></details><details><summary>Latest Contributors(2)</summary><table><tr><th>User</th><th>Commit</th><th>Date</th></tr><tr><td>davidsulitzer@icloud.com</td><td>fix(onboarding): settl...</td><td>July 27, 2026</td></tr>\n<tr><td>aviadsteps</td><td>Merge branch &#x27;develop&#x27;...</td><td>July 22, 2026</td></tr></table></details></td></tr></table>\n<sub><a href=\"https://baz.co/changes/stepscode/steps-server/1955?tool=ast\">Review this PR on Baz</a> | <a href=\"https://baz.co/agents/baz\">Customize your next review</a></sub>",
+    "changedFiles": 7,
+    "createdAt": "2026-07-27T16:17:53Z",
+    "deletions": 41,
+    "files": [
+      {
+        "path": "api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js",
+        "additions": 4,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+        "additions": 43,
+        "deletions": 22,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/businessLogic/smartSearch/smartSearchV3.js",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/model/googlePlaceTypes.js",
+        "additions": 10,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/model/placeCategory.js",
+        "additions": 11,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js",
+        "additions": 9,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+        "additions": 93,
+        "deletions": 12,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "headRefName": "codex/4360-guided-manhattan-runtime-rescue",
+    "isDraft": false,
+    "labels": [],
+    "mergeStateStatus": "BLOCKED",
+    "mergeable": "MERGEABLE",
+    "number": 1955,
+    "reviewRequests": [],
+    "reviews": [
+      {
+        "id": "PRR_kwDOJQAMI88AAAABHXWszA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-27T16:22:47Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "e05a3d5792847b608e5edb6caaaf981e7521a4ea"
+        }
+      },
+      {
+        "id": "PRR_kwDOJQAMI88AAAABHXZh4Q",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-27T16:28:11Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "85b03fd04cdca283c489f7ce8f055b80134ffa02"
+        }
+      },
+      {
+        "id": "PRR_kwDOJQAMI88AAAABHXZoCw",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-07-27T16:28:24Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "85b03fd04cdca283c489f7ce8f055b80134ffa02"
+        }
+      },
+      {
+        "id": "PRR_kwDOJQAMI88AAAABHXZvYg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-27T16:28:38Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "85b03fd04cdca283c489f7ce8f055b80134ffa02"
+        }
+      }
+    ],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284849735/job/90039993959",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T16:28:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:29:05Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284866944/job/90040053282",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T16:28:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:29:17Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284885619/job/90040115339",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T16:28:46Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:42Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284837062/job/90039951619",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-07-27T16:28:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:14Z",
+        "conclusion": "CANCELLED",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284837069/job/90039951891",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T16:28:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:15Z",
+        "conclusion": "CANCELLED",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284849687/job/90039994170",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T16:28:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:38Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284868215/job/90040057615",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T16:28:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-server/actions/runs/30284885548/job/90040115365",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-07-27T16:28:54Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T16:28:12Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://baz.co/sessions/48bac794-1ab3-494f-ad0b-ba495ef03d80",
+        "name": "Baz Reviewer",
+        "startedAt": "2026-07-27T16:28:06Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "ci/circleci: run_tests_on_pr_job",
+        "startedAt": "2026-07-27T16:52:40Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://circleci.com/gh/stepscode/steps-server/94896"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "ci/circleci: test_coverage_job",
+        "startedAt": "2026-07-27T16:53:12Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://circleci.com/gh/stepscode/steps-server/94897"
+      }
+    ],
+    "title": "Restore quality-gated Manhattan rescue for guided onboarding",
+    "updatedAt": "2026-07-27T17:01:04Z",
+    "url": "https://github.com/stepscode/steps-server/pull/1955"
+  },
+  "review_threads": [
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+            "body": "### Local timeout can overlap Manhattan work\n\n`evaluateAndSelectOnboardingHero` can enter the Manhattan rescue while the previous `evaluateCandidatesWithTimeout(...)` is still running, since the timeout only aborts via `Promise.race([...])` and doesn't wait for the local work to stop; `resolveNearbyLocationsForSearch` and `getCachedActiveGooglePlaceTypesForAtly4` also ignore `signal`, so the bounded-rescue budget can be exceeded — should we thread the abort signal through and wait for the local evaluation to finish cancelling before starting Manhattan?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=medium\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20api%2FbusinessLogic%2FonboardingSearch%2FonboardingSearchSelection.js%20around%20lines%20216-296%2C%20specifically%20in%20evaluateAndSelectOnboardingHero%20where%20it%20sets%20localEvaluationFailed%20and%20then%20continues%20into%20the%20Manhattan%20retry%20when%20hasMissionPreview%20is%20true%20%28lines%20257-260%20and%20the%20subsequent%20missionPreviewOnly%2FmanhattanGenerationResult%20construction%29%2C%20fix%20the%20%E2%80%9Coverlapping%20rescue%E2%80%9D%20behavior.%20Refactor%20evaluateCandidatesWithTimeout%20%28or%20its%20usage%20here%29%20so%20that%20when%20a%20timeout%2Ferror%20occurs%20it%20fully%20cancels%20the%20underlying%20evaluateCandidates%20work%20and%20awaits%20it%20to%20settle%20before%20starting%20Manhattan%20%28do%20not%20just%20return%20on%20Promise.race%29.%20Also%20propagate%20the%20AbortSignal%20through%20the%20coverage%2FDB%20path%20used%20by%20local%20evaluation%20%28e.g.%2C%20resolveNearbyLocationsForSearch%20and%20getCachedActiveGooglePlaceTypesForAtly4%2FconnectToDatabase%2FGooglePlaceType.find%29%20so%20those%20operations%20stop%20when%20aborted%2C%20ensuring%20the%20retry%20budget%2Fbounded%20rescue%20behavior%20is%20reliable.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\napi/businessLogic/onboardingSearch/onboardingSearchSelection.js around lines 216-296,\nspecifically in evaluateAndSelectOnboardingHero where it sets localEvaluationFailed and\nthen continues into the Manhattan retry when hasMissionPreview is true (lines 257-260\nand the subsequent missionPreviewOnly/manhattanGenerationResult construction), fix the\n“overlapping rescue” behavior. Refactor evaluateCandidatesWithTimeout (or its usage\nhere) so that when a timeout/error occurs it fully cancels the underlying\nevaluateCandidates work and awaits it to settle before starting Manhattan (do not just\nreturn on Promise.race). Also propagate the AbortSignal through the coverage/DB path\nused by local evaluation (e.g., resolveNearbyLocationsForSearch and\ngetCachedActiveGooglePlaceTypesForAtly4/connectToDatabase/GooglePlaceType.find) so those\noperations stop when aborted, ensuring the retry budget/bounded rescue behavior is\nreliable.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+            "body": "Commit 85b03fd **addressed** this comment by awaiting the aborted local evaluation before allowing the Manhattan retry to begin. It also propagates the abort signal and query timeout into cached Google place-type lookup and related database operations."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+            "body": "Addressed in 85b03fd04cdca283c489f7ce8f055b80134ffa02. The timeout path now aborts and awaits the local evaluation settlement before Manhattan can start. Cancellation is threaded into active-category and Google-place-type Mongo queries with the existing bounded DB deadline, and the focused regression proves no local/Manhattan overlap."
+          }
+        ]
+      }
+    }
+  ],
+  "diff_file": "/home/aviad/mc/traces/pr-server-1955/collect/85b03fd04cdc/steps-server-1955.diff",
+  "signals": {
+    "ci_config_files": [],
+    "serverless_yml": [],
+    "migration_files": [],
+    "test_or_settings_files": [
+      "api/test/unit/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js",
+      "api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js"
+    ],
+    "payments_files": [],
+    "asset_files": [],
+    "secret_literal_suspects": [],
+    "index_from_code_hits": [],
+    "unawaited_telemetry_suspects": [],
+    "fibery_linked": false,
+    "has_conflicts": false
+  }
+}

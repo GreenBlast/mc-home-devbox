@@ -1,0 +1,83 @@
+{
+  "iteration": 1,
+  "head_sha": "85b03fd04cdca283c489f7ce8f055b80134ffa02",
+  "verdict": "FINDINGS",
+  "one_liner": "Raises the guided-onboarding runtime evaluation budget to 16s and, after a local evaluation timeout/error, aborts and awaits the local work before retrying a single deterministic Manhattan mission preview behind the existing quality gate, threading AbortSignal/maxTimeMS into the active-category and Google-place-type Mongo lookups.",
+  "findings": [
+    {
+      "id": "f1",
+      "class": "high",
+      "gate": null,
+      "file": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+      "line": null,
+      "body": "[High] `evaluateCandidatesWithTimeout` — the new `await evaluation.catch(() => {});` in the `catch` block is unbounded, so `LOCAL_RUNTIME_EVALUATION_TIMEOUT_MS` is no longer an upper bound on the local phase and `LAMBDA_RESPONSE_HEADROOM_MS` is no longer guaranteed. (Anchoring note: the diff's hunk headers for this file are internally inconsistent, so no line number is given — the target is the `await evaluation.catch(() => {})` line inside the new `catch (error)` block of `evaluateCandidatesWithTimeout`.)\n\nThe abort only stops work at the cooperative `signal?.throwIfAborted()` checkpoints; anything already in flight has to finish on its own. The worst case is `await connectToDatabase()` (`api/utils/db.js`), which takes no signal, serialises on a module-level mutex, and connects with `serverSelectionTimeoutMS: 10000` — so it can hold for ~10s after the abort with nothing able to cancel it.\n\nWorked example on the real config (`serverless.yml` `onboardingSearchGeneration`, `timeout: 30`, behind API Gateway's 29s cap): generation leaves ~12s, so `runtimeEvaluationBudgetMs = 12000 - 5000 = 7000` and the local timeout fires at t=5000. If a cold-start or failover `connectToDatabase()` is in flight, the settle wait runs to ~t=15000 — past the 12s that were left — and the Lambda hard-times-out with no body instead of returning a payload. Before this PR the `Promise.race` returned `runtime_evaluation_error` at exactly t=5000 with the full 5s headroom intact. Any deadline re-check before the Manhattan phase is too late: the overrun has already happened by the time control returns.\n\nSuggest bounding the settle wait against the time actually left rather than awaiting it unconditionally — e.g. `await Promise.race([evaluation.catch(() => {}), delay(Math.max(0, runtimeEvaluationDeadline - Date.now()))])` — so the no-overlap guarantee never costs more than the remaining budget.",
+      "failure_path": "Lambda cold start or Mongo failover puts a non-abortable `connectToDatabase()` (serverSelectionTimeoutMS: 10000, behind a mutex) in flight inside `evaluateCandidates`. At t=5000ms the local timeout fires and aborts, but the new `await evaluation.catch(() => {})` blocks until that connect settles, up to t≈15000ms. With generation having already consumed ~18s of the 30s Lambda, only ~12s remained, so the handler is killed by the Lambda/API-Gateway timeout and the client gets a 504 with no body — where before the PR the race returned a graceful `runtime_evaluation_error` at t=5000ms with 7s to spare. The 5s `LAMBDA_RESPONSE_HEADROOM_MS` reservation that the unit test asserts is silently bypassed because the settle wait is outside the budget accounting.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f2",
+      "class": "medium",
+      "gate": null,
+      "file": "api/model/placeCategory.js",
+      "line": 20,
+      "body": "[Medium] `query.setOptions({... signal})` here and the identical block in `api/model/googlePlaceTypes.js` look like they do nothing. `api/package.json` pins `mongoose@^7.8.3` (Node driver 5.x); as far as I can tell neither Mongoose 7's query options nor the driver's `FindOptions` understand an `AbortSignal` — unknown keys are dropped when the find command is built, so an abort mid-query will not cancel it. If that's right, the only real bound on these queries is `maxTimeMS`, and the \"cancellation is threaded into the Mongo queries\" guarantee that the new settle-wait in `evaluateCandidatesWithTimeout` leans on doesn't hold. Related: `api/businessLogic/smartSearch/smartSearchV3.js:530` passes `{signal}` but no `maxTimeMS`, so that call gets no bound at all.\n\nI might be mistaken here — can you point at the mongoose/driver support for the option? Otherwise I'd drop `signal` from `setOptions`, keep `maxTimeMS`, and rely on the explicit `throwIfAborted()` checkpoints, so the code doesn't read as if the query is cancellable when it isn't.",
+      "failure_path": "Not a crash — a false guarantee. If mongoose 7 / driver 5 ignore the `signal` option, an aborted local evaluation keeps its in-flight `PlaceCategory.find` / `GooglePlaceType.find` running until the server-side `maxTimeMS` expires, so the settle wait added in this PR costs up to RUNTIME_DATABASE_MAX_TIME_MS per in-flight query instead of returning promptly. This is the mechanism behind f1 and it also makes the reply on the Baz thread (\"cancellation is threaded into active-category and Google-place-type Mongo queries\") inaccurate.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f3",
+      "class": "medium",
+      "gate": null,
+      "file": "api/test/unit/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+      "line": 204,
+      "body": "[Medium] All three rescue regressions use `geo: {lat: 0, lon: 0}`, and this PR also rewrites the pre-existing mission-preview test from `{lat: 41.3874, lon: 2.1686}` (Barcelona) to the same value. `0` is falsy in JS, so any `if (geo?.lat && geo?.lon)`-style guard on the selection path takes its no-usable-geo branch under these tests. The production scenario this PR is fixing is a user who *does* have a location and whose local coverage evaluation times out — with (0,0) the regressions may be proving a different branch than the one being repaired.\n\nWhat made the geo change necessary? If it isn't load-bearing, please keep real coordinates so the new tests match the production path; if it is load-bearing, that coupling is worth a line in the test name.",
+      "failure_path": "No proven runtime failure — a test-validity concern. If any guard on the path treats falsy lat/lon as \"no geo\", the three new rescue tests exercise the degenerate-location branch rather than the timed-out-local-coverage branch, so the regression coverage the PR cites as proof would not actually pin the fixed behavior, and a future change to the real-geo path could regress silently.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f4",
+      "class": "judgment",
+      "gate": null,
+      "file": "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+      "line": null,
+      "body": "Question on the approach, not a blocker. `const missionPreviewOnly = hasMissionPreview;` makes the preview-only shortcut apply to *every* Manhattan retry, not just the runtime-rescue one: `manhattanGenerationResult.searches` becomes `[manhattanPreviewSearch]` with `primary_search_index: 0` whenever a mission preview exists. The pre-existing insufficient-results retry used to evaluate all generated searches *plus* the appended preview in Manhattan, so a personalised generated query could still win there; after this PR that path can only ever return the generic mission preview. The updated test at the top of the file (4 searches -> 1) is that behavior change, not a rescue-path test.\n\nIs narrowing the existing insufficient-results path intended as part of this fix, or should the preview-only shortcut be gated on `localEvaluationFailed` so the timeout rescue stays bounded without changing the non-rescue retry? (Anchoring note: no line number — the diff's hunk headers for this file are inconsistent; the target is the `const missionPreviewOnly = hasMissionPreview;` line in `evaluateAndSelectOnboardingHero`.)",
+      "failure_path": "No failure path — product/behavior question. Users on the existing insufficient-results retry lose the chance of a personalised query succeeding in Manhattan and always get the generic mission preview instead.",
+      "already_raised_by_bots": false
+    },
+    {
+      "id": "f5",
+      "class": "low",
+      "gate": null,
+      "file": null,
+      "line": null,
+      "body": "Briefing only, do not post. Two process/verification gaps I could not close from the diff: (a) no Fibery task linked (`signals.fibery_linked = false`) — Aviad's standard steps-server holdup; (b) `manhattan_runtime_rescue` is a brand-new `reason_family` value and the local clone is at a ref that predates this whole module, so I could not check whether any dashboard, alert, or client consumer enumerates the allowed reason families. Worth a look before the telemetry is relied on for the 4.36.0 launch decision.",
+      "failure_path": "No failure path. Process gate plus an unverifiable telemetry-consumer question, recorded so it is not mistaken for something I checked.",
+      "already_raised_by_bots": false
+    }
+  ],
+  "verified_fixed": [],
+  "regressions": [],
+  "escalate": null,
+  "briefing": {
+    "what_it_does": "Follow-up to #1952 for the 4.36.0 guided-first-search launch blocker. Raises RUNTIME_EVALUATION_TIMEOUT_MS 10s -> 16s (LOCAL_RUNTIME_EVALUATION_TIMEOUT_MS stays 5s, LAMBDA_RESPONSE_HEADROOM_MS stays 5s), makes a local runtime failure/timeout no longer fail closed: it now aborts the local evaluation, awaits it settling, then evaluates one deterministic Manhattan mission preview under the existing editorial/source quality gate, returning reason_family 'manhattan_runtime_rescue' or falling back to 'runtime_evaluation_error'. Threads AbortSignal + maxTimeMS into getCachedActiveGooglePlaceTypesForAtly4 and getAllActivePlaceCategories.",
+    "red_flags": [
+      "f1 [High]: the settle wait added to satisfy Baz's overlap comment is unbounded and sits outside the runtime budget accounting, so the 5s Lambda headroom can be blown by a non-abortable connectToDatabase (serverSelectionTimeoutMS 10000, mutex-serialised).",
+      "f2 [Medium]: setOptions({signal}) is very likely inert on mongoose ^7.8.3 / driver 5.x, which undercuts the cancellation guarantee f1 depends on and makes the reply on the Baz thread inaccurate.",
+      "f3 [Medium]: all rescue regressions use falsy geo (0,0), and an existing test was migrated off Barcelona to match.",
+      "f4 [judgment]: the preview-only Manhattan retry now also narrows the pre-existing insufficient-results path.",
+      "Fail-closed behavior is deliberately relaxed: a local runtime error now proceeds to a Manhattan retry instead of returning immediately."
+    ],
+    "core_files": [
+      "api/businessLogic/onboardingSearch/onboardingSearchSelection.js",
+      "api/businessLogic/onboardingSearch/onboardingSearchRuntimeCoverage.js",
+      "api/model/googlePlaceTypes.js",
+      "api/model/placeCategory.js",
+      "api/businessLogic/smartSearch/smartSearchV3.js"
+    ],
+    "loop_history": "Round 1, full first pass. Four postable findings (1 high, 2 medium, 1 judgment) plus one briefing-only item. Baz's single review thread (local/Manhattan overlap) is resolved and the diff does implement the awaited-abort it asked for, so it is genuinely addressed — f1 is about the cost of that cure, not a restatement of the thread.",
+    "ci": "ci/circleci run_tests_on_pr_job SUCCESS, test_coverage_job SUCCESS, Baz Reviewer SUCCESS + APPROVED at head, require-resolved-review-threads SUCCESS at head; sensitive-scope-approval-gate FAILURE x4 = Aviad's approval, expected red.",
+    "aviad_risk_label": null,
+    "protected_zone": "none — no serverless.yml change, no migration, no index-from-code, no purchases/subscriptions, no CI/build files, mergeable, no secret literals. Scope (smartSearchV3 / placeCategory / googlePlaceTypes) is a justified consequence of threading the signal, not scope creep.",
+    "not_verified": "The local clone at 56b8f2a5e1 predates onboardingSearchSelection.js and onboardingSearchRuntimeCoverage.js, so surrounding context for those two files came only from the diff. api/node_modules is not installed and the charter forbids executing anything, so f2's mongoose/driver claim is reasoned from api/package.json (mongoose ^7.8.3) rather than observed. Several hunk bodies in the collected diff are elided (the deadline guard before the Manhattan phase, the Manhattan evaluateCandidatesWithTimeout call, the body of selectManhattanHero's mission-preview branch) and were not reviewed."
+  }
+}
