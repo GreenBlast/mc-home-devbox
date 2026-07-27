@@ -1,3 +1,4 @@
-2	%19	Main:2	personal	needs	80	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	say the word and I'll merge and deploy it
-2	%20	Main:3	personal	needs	89	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	decide the disk alert threshold, since the box sits at 74% against a 70%
+2	%19	Main:2	personal	needs	148	0	0	16250bbb-2277-4b59-ad4a-b6e692f59f1d	-	Grocery list project feature planning	0	say the word and I'll merge and deploy it
+2	%20	Main:3	personal	needs	156	0	0	9dd79b74-ebef-48b0-927f-2588c21727d3	-	Investigate Home Assistant failed access attempt	0	decide the disk alert threshold, since the box sits at 74% against a 70%
 1	%18	hermes-backup-health-fix:1	personal	needs	999999	0	0	-	-	Verify and complete Hermes devbox Fleet migration cleanup	0	next action is your call on whether to fix the systemd PATH churn
+9	%23	investigate-secrets-monitor-missing-target-pkm:1	personal	working	999999	0	0	-	-	Debug Telegram alerts from Hermes secrets monitor script	0	⚙ working
