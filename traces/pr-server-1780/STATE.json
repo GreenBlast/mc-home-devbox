@@ -5,9 +5,9 @@
   "author": "yashaSteps",
   "mode": "review_only",
   "state": "STALLED",
-  "head_sha": "895dc8a55c7e3576a3a21f09d6e3e9893e62ba22",
-  "base_sha": "eddf75d1b0d659f30c1d005f8eb0f55c04b1cde7",
-  "base_ref": "develop",
+  "head_sha": "e1aec94fc11194577eb181cb81f5b0e47bd4be68",
+  "base_sha": "2ba63de05041356b55af114b0e5ce0ee17480c4d",
+  "base_ref": "release-3.169.0",
   "reviewed_shas": [],
   "round": 0,
   "open_findings": [],
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:27.697601+00:00",
-  "updated_at": "2026-07-29T08:54:30.765717+00:00",
+  "updated_at": "2026-07-29T09:56:57.933325+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:27.697487+00:00",
