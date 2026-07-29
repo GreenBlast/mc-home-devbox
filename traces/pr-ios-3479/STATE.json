@@ -1,0 +1,45 @@
+{
+  "key": "stepscode/steps-ios#3479",
+  "repo": "stepscode/steps-ios",
+  "number": 3479,
+  "author": "8Gaston8",
+  "mode": "full_loop",
+  "state": "REMEDIATION",
+  "head_sha": "18d79339426ec54b60ef69f7a87edd489520af24",
+  "base_sha": "abc30b63fe738354f5092886f0f19b0e139f058c",
+  "base_ref": "develop",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": false,
+  "bot_threads_clear_since": "2026-07-29T15:50:59.781957+00:00",
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-29T15:19:43.404586+00:00",
+  "updated_at": "2026-07-29T16:01:24.475753+00:00",
+  "history": [
+    {
+      "at": "2026-07-29T15:19:43.404386+00:00",
+      "from": "DISCOVERED",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- bot threads: 1 open (chatgpt-codex-connector); no commits for 20m: last push 4m ago",
+      "head_sha": "dc38dd993d5e17240f3d41174cd4d180c93faa95",
+      "round": 0
+    }
+  ]
+}
