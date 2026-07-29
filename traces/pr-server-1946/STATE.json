@@ -1,0 +1,53 @@
+{
+  "key": "stepscode/steps-server#1946",
+  "repo": "stepscode/steps-server",
+  "number": 1946,
+  "author": "aviadsteps",
+  "mode": "review_only",
+  "state": "REMEDIATION",
+  "head_sha": "eb47da38fbf21070eb50f55fd47bbc8ee41e586b",
+  "base_sha": "b1553e0158975effddd63804cb74812a970c97e1",
+  "base_ref": "feature/BAC-9660-track-failed-google-conversion-uploads-with-the-new-data-manager-api",
+  "reviewed_shas": [],
+  "round": 0,
+  "open_findings": [],
+  "closed_findings": [],
+  "escalations": [],
+  "veto_window": {
+    "opens_at": null,
+    "deadline": null,
+    "draft_path": null
+  },
+  "context": {
+    "generation": 1,
+    "last_input_tokens": null,
+    "pct": null
+  },
+  "last_author_activity": null,
+  "enrolled_by": "poller",
+  "schema_version": 1,
+  "self_authored": true,
+  "bot_threads_clear_since": null,
+  "posted_keys": [],
+  "held": false,
+  "created_at": "2026-07-29T10:28:05.372467+00:00",
+  "updated_at": "2026-07-29T10:59:15.513808+00:00",
+  "history": [
+    {
+      "at": "2026-07-29T10:28:05.372338+00:00",
+      "from": "DISCOVERED",
+      "to": "WAITING_ON_BOTS",
+      "reason": "waiting on chatgpt-codex-connector (4m since push)",
+      "head_sha": "733d8860a3215129b23e6908f2ccce072d135841",
+      "round": 0
+    },
+    {
+      "at": "2026-07-29T10:38:29.814325+00:00",
+      "from": "WAITING_ON_BOTS",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- bot threads: 2 open (baz-reviewer, chatgpt-codex-connector); no commits for 20m: last push 14m ago",
+      "head_sha": "733d8860a3215129b23e6908f2ccce072d135841",
+      "round": 0
+    }
+  ]
+}
