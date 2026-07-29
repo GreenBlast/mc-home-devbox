@@ -1,12 +1,12 @@
 {
-  "key": "stepscode/steps-server#1949",
+  "key": "stepscode/steps-server#1959",
   "repo": "stepscode/steps-server",
-  "number": 1949,
+  "number": 1959,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REMEDIATION",
-  "head_sha": "e68bfc288a2a258359bd9edde3449ab0cd94f0f9",
-  "base_sha": "0690c2f146ae489d0b36f1511d4d68c29fca26e4",
+  "state": "WAITING_ON_BOTS",
+  "head_sha": "f4ac57b5223ae1154b57f60413bb21b219aa5806",
+  "base_sha": "0c60f1f4f9e022a1a074e727e445c11c382c0d33",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -27,18 +27,18 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": true,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-07-29T14:27:25.736533+00:00",
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-07-27T15:58:19.555891+00:00",
-  "updated_at": "2026-07-29T14:58:40.946987+00:00",
+  "created_at": "2026-07-29T14:27:25.736652+00:00",
+  "updated_at": "2026-07-29T14:58:40.698005+00:00",
   "history": [
     {
-      "at": "2026-07-27T15:58:19.555734+00:00",
+      "at": "2026-07-29T14:27:25.736533+00:00",
       "from": "DISCOVERED",
-      "to": "REMEDIATION",
-      "reason": "loop 1 still running -- bot threads: 1 open (baz-reviewer)",
-      "head_sha": "a5cbfd86d739f61e350cb3e5079d9a4395c6caca",
+      "to": "WAITING_ON_BOTS",
+      "reason": "waiting on chatgpt-codex-connector (9m since push)",
+      "head_sha": "f4ac57b5223ae1154b57f60413bb21b219aa5806",
       "round": 0
     }
   ]
