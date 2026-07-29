@@ -4,9 +4,9 @@
   "number": 3457,
   "author": "8Gaston8",
   "mode": "full_loop",
-  "state": "REMEDIATION",
-  "head_sha": "e8f577c337f785bf4b514686ce8714495fd0178e",
-  "base_sha": "9c7e21f6aaca270aa152cccc962020595cc1a893",
+  "state": "REVIEWING",
+  "head_sha": "3a8963ee9ad4c7508798068c8104b5ac31a40d97",
+  "base_sha": "8737fcb86665c6ca635bc9e04c63daffef3347c4",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -37,7 +37,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:32.761685+00:00",
-  "updated_at": "2026-07-29T12:01:51.126666+00:00",
+  "updated_at": "2026-07-29T13:04:19.294101+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:32.761491+00:00",
@@ -45,6 +45,14 @@
       "to": "REMEDIATION",
       "reason": "loop 1 still running -- bot threads: 9 open (baz-reviewer); re-requested aviadsteps or 45m clear: no re-request; bot threads clear 0m (need 45m)",
       "head_sha": "312f806343e795b6b8f0695620282892cfc6be20",
+      "round": 0
+    },
+    {
+      "at": "2026-07-29T12:33:04.414793+00:00",
+      "from": "REMEDIATION",
+      "to": "REVIEWING",
+      "reason": "agent iteration in progress",
+      "head_sha": "27be173ea0dc9c2892a8bdf413e08db9d9982588",
       "round": 0
     }
   ]

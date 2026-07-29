@@ -4,7 +4,7 @@
   "number": 1946,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REMEDIATION",
+  "state": "REVIEWING",
   "head_sha": "ff843a81569c17f51ac4d1e8d6558af1840d35d5",
   "base_sha": "b1553e0158975effddd63804cb74812a970c97e1",
   "base_ref": "feature/BAC-9660-track-failed-google-conversion-uploads-with-the-new-data-manager-api",
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": true,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-07-29T12:22:26.404913+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-29T10:28:05.372467+00:00",
-  "updated_at": "2026-07-29T12:01:37.812714+00:00",
+  "updated_at": "2026-07-29T13:04:05.932021+00:00",
   "history": [
     {
       "at": "2026-07-29T10:28:05.372338+00:00",
@@ -47,6 +47,14 @@
       "to": "REMEDIATION",
       "reason": "loop 1 still running -- bot threads: 2 open (baz-reviewer, chatgpt-codex-connector); no commits for 20m: last push 14m ago",
       "head_sha": "733d8860a3215129b23e6908f2ccce072d135841",
+      "round": 0
+    },
+    {
+      "at": "2026-07-29T12:22:26.404913+00:00",
+      "from": "REMEDIATION",
+      "to": "REVIEWING",
+      "reason": "agent iteration in progress",
+      "head_sha": "ff843a81569c17f51ac4d1e8d6558af1840d35d5",
       "round": 0
     }
   ]
