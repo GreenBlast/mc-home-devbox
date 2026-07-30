@@ -5,8 +5,8 @@
   "author": "8Gaston8",
   "mode": "full_loop",
   "state": "REVIEWING",
-  "head_sha": "82d07bd04939dbc446ed9f4cbe1744486ae97004",
-  "base_sha": "562c44d39439bb39951563fce5872b230a7fca31",
+  "head_sha": "f9ea8881e0fc6248c92cd98399b55186b18b2307",
+  "base_sha": "5fb636e7a7e44c411b0c5b8cbdef2c87704c35e0",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:20.979222+00:00",
-  "updated_at": "2026-07-30T14:21:44.620611+00:00",
+  "updated_at": "2026-07-30T15:24:15.029382+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:20.978951+00:00",

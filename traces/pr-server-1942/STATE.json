@@ -1,12 +1,12 @@
 {
-  "key": "stepscode/steps-server#1847",
+  "key": "stepscode/steps-server#1942",
   "repo": "stepscode/steps-server",
-  "number": 1847,
+  "number": 1942,
   "author": "8Gaston8",
   "mode": "full_loop",
   "state": "STALLED",
-  "head_sha": "7a674d84f74b639ae70b2e54daa5c50d752ab43b",
-  "base_sha": "b418c8fb2a15e2c14a176dee6b6beb5ad55af1ee",
+  "head_sha": "ea79194ce5e64e7a3a1d9e8520f8c021f8582893",
+  "base_sha": "2c6f47d08400a940caf0d1fc351b3ee807815773",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -27,18 +27,18 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": "2026-07-27T15:58:25.841948+00:00",
+  "bot_threads_clear_since": "2026-07-30T15:03:25.059961+00:00",
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-07-27T15:58:25.842055+00:00",
-  "updated_at": "2026-07-30T15:24:20.076291+00:00",
+  "created_at": "2026-07-30T15:03:25.060162+00:00",
+  "updated_at": "2026-07-30T15:13:50.235958+00:00",
   "history": [
     {
-      "at": "2026-07-27T15:58:25.841948+00:00",
+      "at": "2026-07-30T15:03:25.059961+00:00",
       "from": "DISCOVERED",
       "to": "STALLED",
-      "reason": "no push for 32.1d (limit 3d) -- backlog, not forward-only traffic",
-      "head_sha": "7a674d84f74b639ae70b2e54daa5c50d752ab43b",
+      "reason": "no push for 9.9d (limit 3d) -- backlog, not forward-only traffic",
+      "head_sha": "ea79194ce5e64e7a3a1d9e8520f8c021f8582893",
       "round": 0
     }
   ]
