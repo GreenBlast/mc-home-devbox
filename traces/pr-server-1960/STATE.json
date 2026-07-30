@@ -5,7 +5,7 @@
   "author": "aviadsteps",
   "mode": "review_only",
   "state": "REMEDIATION",
-  "head_sha": "14dc76b726cc81f21aa763b2065b1f874543976f",
+  "head_sha": "358d4f22f8f96d78be5fd8d151f239b54a2d8e67",
   "base_sha": "75546fb1ed7b087c72f59b575dff82ce668ad73c",
   "base_ref": "develop",
   "reviewed_shas": [],
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": true,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-07-30T13:19:16.248053+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-29T14:48:15.654660+00:00",
-  "updated_at": "2026-07-30T12:16:55.645980+00:00",
+  "updated_at": "2026-07-30T13:19:16.248168+00:00",
   "history": [
     {
       "at": "2026-07-29T14:48:15.654563+00:00",
