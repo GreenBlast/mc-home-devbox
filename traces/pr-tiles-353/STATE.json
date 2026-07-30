@@ -1,12 +1,12 @@
 {
-  "key": "stepscode/steps-server#1959",
-  "repo": "stepscode/steps-server",
-  "number": 1959,
+  "key": "stepscode/atly-tileserver#353",
+  "repo": "stepscode/atly-tileserver",
+  "number": 353,
   "author": "aviadsteps",
   "mode": "review_only",
   "state": "REVIEWING",
-  "head_sha": "f4ac57b5223ae1154b57f60413bb21b219aa5806",
-  "base_sha": "0c60f1f4f9e022a1a074e727e445c11c382c0d33",
+  "head_sha": "f2081bfbb072483c8a6b30931ed2d919c2aeb8f3",
+  "base_sha": "9c4996353fd6633de36421b6b7cf28a7774a1b5a",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -27,26 +27,26 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": true,
-  "bot_threads_clear_since": "2026-07-29T14:27:25.736533+00:00",
+  "bot_threads_clear_since": "2026-07-30T10:43:29.980880+00:00",
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-07-29T14:27:25.736652+00:00",
-  "updated_at": "2026-07-30T11:24:55.300736+00:00",
+  "created_at": "2026-07-30T10:43:29.980970+00:00",
+  "updated_at": "2026-07-30T11:25:12.495633+00:00",
   "history": [
     {
-      "at": "2026-07-29T14:27:25.736533+00:00",
+      "at": "2026-07-30T10:43:29.980880+00:00",
       "from": "DISCOVERED",
       "to": "WAITING_ON_BOTS",
-      "reason": "waiting on chatgpt-codex-connector (9m since push)",
-      "head_sha": "f4ac57b5223ae1154b57f60413bb21b219aa5806",
+      "reason": "waiting on chatgpt-codex-connector (8m since push)",
+      "head_sha": "f2081bfbb072483c8a6b30931ed2d919c2aeb8f3",
       "round": 0
     },
     {
-      "at": "2026-07-29T15:09:04.544936+00:00",
+      "at": "2026-07-30T11:25:12.495533+00:00",
       "from": "WAITING_ON_BOTS",
       "to": "REVIEWING",
       "reason": "agent iteration in progress",
-      "head_sha": "f4ac57b5223ae1154b57f60413bb21b219aa5806",
+      "head_sha": "f2081bfbb072483c8a6b30931ed2d919c2aeb8f3",
       "round": 0
     }
   ]
