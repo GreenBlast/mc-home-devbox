@@ -1,2 +1,2 @@
-1	%0	rereview-pr-1961:1	personal	needs	212	0	0	ea8e34c7-8c42-4fd6-aa90-8d0db40d211c	-	Review GitHub PR #1961 for steps-server	0	you need to replace your standing CHANGES_REQUESTED review with an appro
-2	%1	rereview-pr-1961:2	personal	needs	156	0	0	e75de36c-fe94-4d48-96fa-83384fce73f7	-	Check for missing tmux and Claude sessions	0	say whether I should widen claude-session-map
+1	%0	rereview-pr-1961:1	personal	needs	716	0	0	ea8e34c7-8c42-4fd6-aa90-8d0db40d211c	-	Review GitHub PR #1961 for steps-server	0	you need to replace your standing CHANGES_REQUESTED review with an appro
+2	%1	rereview-pr-1961:2	personal	needs	660	0	0	e75de36c-fe94-4d48-96fa-83384fce73f7	-	Check for missing tmux and Claude sessions	0	say whether I should widen claude-session-map
