@@ -1,6 +1,25 @@
 # Mission Control — Concierge STATUS
 
-_Last updated: 2026-07-30 11:30 (fresh session after 11-day gap; prior entry 2026-07-19 21:45)_
+_Last updated: 2026-07-31 (dispatched pkm pane; prior entry 2026-07-30 11:30)_
+
+## Latest action — new pkm pane dispatched (Aviad's request)
+
+Spawned a fresh Claude Code instance on the **default** socket:
+- **`Main:5` / `%5`**, window named `pkm`, cwd `~/Projects/ObsidianVaults/Aviad`
+- Launched plain `claude`; confirmed up, auto mode on.
+- Made it a **new window**, not a split — every window in this fleet is 1 pane, and
+  splitting would have shrunk a live claude pane (fleet panes are handled gently).
+- Pane is 80x24 because no client is attached to the default socket; it resizes when
+  Aviad attaches.
+
+**Correction to Finding 2 below:** the fleet is *not* empty. tmux-resurrect brought
+`Main` back at 11:25:46 on Jul 30, just after the initial sweep. `mc fleet` now shows
+**4 claude panes**: `%0` Main:1 obsidian-helper (nosignal), `%1` Main:2
+merge-deploy-activity-log (**needs** — "merge + deploy … with the verification
+results"), `%2` Main:3 shabbat-ac-mechanism-overhaul (nosignal), `%5` Main:5 the new
+pkm pane. Plus `Main:4` = plain zsh. The Jul-20 drain history in Finding 2 still
+stands; the "0 panes" reading was a snapshot taken before resurrect finished.
+
 
 ## READ THIS FIRST — the previous STATUS.md was 11 days stale
 
