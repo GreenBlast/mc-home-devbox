@@ -4,7 +4,7 @@
   "number": 1949,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REMEDIATION",
+  "state": "STALLED",
   "head_sha": "e68bfc288a2a258359bd9edde3449ab0cd94f0f9",
   "base_sha": "0690c2f146ae489d0b36f1511d4d68c29fca26e4",
   "base_ref": "develop",
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:19.555891+00:00",
-  "updated_at": "2026-08-01T08:47:25.056337+00:00",
+  "updated_at": "2026-08-01T09:49:37.547051+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:19.555734+00:00",
@@ -39,6 +39,14 @@
       "to": "REMEDIATION",
       "reason": "loop 1 still running -- bot threads: 1 open (baz-reviewer)",
       "head_sha": "a5cbfd86d739f61e350cb3e5079d9a4395c6caca",
+      "round": 0
+    },
+    {
+      "at": "2026-08-01T09:49:37.546944+00:00",
+      "from": "REMEDIATION",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 3.0d (limit 3d)",
+      "head_sha": "e68bfc288a2a258359bd9edde3449ab0cd94f0f9",
       "round": 0
     }
   ]
