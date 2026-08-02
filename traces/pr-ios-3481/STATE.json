@@ -5,7 +5,7 @@
   "author": "8Gaston8",
   "mode": "full_loop",
   "state": "REVIEWING",
-  "head_sha": "78800f80d17149b80fbfc28e06a99d046f659e8e",
+  "head_sha": "d6cc590b481742e39601ae9b8255c81d17f5b044",
   "base_sha": "abc30b63fe738354f5092886f0f19b0e139f058c",
   "base_ref": "develop",
   "reviewed_shas": [],
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": "2026-08-02T16:48:26.919501+00:00",
+  "bot_threads_clear_since": null,
   "posted_keys": [],
   "held": false,
   "created_at": "2026-08-02T11:25:55.870462+00:00",
-  "updated_at": "2026-08-02T20:06:01.311496+00:00",
+  "updated_at": "2026-08-02T21:08:25.691968+00:00",
   "history": [
     {
       "at": "2026-08-02T11:25:55.870243+00:00",
