@@ -5,7 +5,7 @@
   "author": "atlyguy123",
   "mode": "review_only",
   "state": "STALLED",
-  "head_sha": "23c2250701aa22e215746b1a2fba18510b81c9c9",
+  "head_sha": "8bd9cab3cefdee5d69deec8f6e9f0ceacef106e0",
   "base_sha": "abc30b63fe738354f5092886f0f19b0e139f058c",
   "base_ref": "develop",
   "reviewed_shas": [],
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": "2026-08-01T19:41:06.294435+00:00",
+  "bot_threads_clear_since": "2026-08-02T13:09:59.972094+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:32.674638+00:00",
-  "updated_at": "2026-08-02T12:07:31.211591+00:00",
+  "updated_at": "2026-08-02T13:09:59.972330+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:32.674503+00:00",

@@ -5,8 +5,8 @@
   "author": "shirlau",
   "mode": "review_only",
   "state": "STALLED",
-  "head_sha": "b4f381e63384bb63e60da1ebf31abcb96dad5dbb",
-  "base_sha": "65ea095084ba32f725e1a54df06c66e8c4334610",
+  "head_sha": "1f51ed0e087ce7e308713780eb6b24eee8a7a745",
+  "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:31.556584+00:00",
-  "updated_at": "2026-08-02T12:07:29.458252+00:00",
+  "updated_at": "2026-08-02T13:09:58.244219+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:31.556417+00:00",
