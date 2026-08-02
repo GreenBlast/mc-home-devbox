@@ -4,7 +4,7 @@
   "number": 1960,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REMEDIATION",
+  "state": "STALLED",
   "head_sha": "358d4f22f8f96d78be5fd8d151f239b54a2d8e67",
   "base_sha": "75546fb1ed7b087c72f59b575dff82ce668ad73c",
   "base_ref": "develop",
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-29T14:48:15.654660+00:00",
-  "updated_at": "2026-08-02T13:09:47.194596+00:00",
+  "updated_at": "2026-08-02T14:12:12.478644+00:00",
   "history": [
     {
       "at": "2026-07-29T14:48:15.654563+00:00",
@@ -47,6 +47,14 @@
       "to": "REMEDIATION",
       "reason": "loop 1 still running -- bot threads: 1 open (chatgpt-codex-connector); no commits for 20m: last push 16m ago",
       "head_sha": "14dc76b726cc81f21aa763b2065b1f874543976f",
+      "round": 0
+    },
+    {
+      "at": "2026-08-02T13:20:13.782578+00:00",
+      "from": "REMEDIATION",
+      "to": "STALLED",
+      "reason": "remediation owed but no push for 3.0d (limit 3d)",
+      "head_sha": "358d4f22f8f96d78be5fd8d151f239b54a2d8e67",
       "round": 0
     }
   ]

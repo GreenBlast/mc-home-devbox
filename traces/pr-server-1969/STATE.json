@@ -7,7 +7,7 @@
   "state": "REVIEWING",
   "head_sha": "1f725f7530309929f95de3cc8273327281bdaf6f",
   "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
-  "base_ref": "develop",
+  "base_ref": "release-3.170.0",
   "reviewed_shas": [],
   "round": 0,
   "open_findings": [],
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-08-02T12:38:31.616441+00:00",
-  "updated_at": "2026-08-02T13:09:47.018406+00:00",
+  "updated_at": "2026-08-02T14:12:12.472731+00:00",
   "history": [
     {
       "at": "2026-08-02T12:38:31.616341+00:00",

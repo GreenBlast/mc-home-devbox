@@ -1,10 +1,12 @@
 {
  "log_offset": {
-  "mc-dev": 2743147,
+  "mc-dev": 2768452,
   "shabbat-climate": 1637,
   "concierge": 1955907,
   "pr-tiles-350": 262078,
   "pr-server-1955": 342327
  },
- "silent_since_notified": {}
+ "silent_since_notified": {
+  "concierge": 1785399897
+ }
 }
