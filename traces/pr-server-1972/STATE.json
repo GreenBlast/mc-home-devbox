@@ -1,13 +1,13 @@
 {
-  "key": "stepscode/steps-server#1875",
+  "key": "stepscode/steps-server#1972",
   "repo": "stepscode/steps-server",
-  "number": 1875,
+  "number": 1972,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "STALLED",
-  "head_sha": "ee170011ab99af6e66a71d43367ae34694fbbe2f",
-  "base_sha": "8f0db54c8c57e268f1302437116b9fd87da9dc6c",
-  "base_ref": "develop",
+  "state": "REMEDIATION",
+  "head_sha": "f5fe14d587d1edac0b009566c87239729178e24e",
+  "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
+  "base_ref": "release-3.170.0",
   "reviewed_shas": [],
   "round": 0,
   "open_findings": [],
@@ -30,15 +30,15 @@
   "bot_threads_clear_since": null,
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-07-27T15:58:22.559513+00:00",
-  "updated_at": "2026-08-02T15:14:33.184287+00:00",
+  "created_at": "2026-08-02T14:43:20.453796+00:00",
+  "updated_at": "2026-08-02T15:14:29.420353+00:00",
   "history": [
     {
-      "at": "2026-07-27T15:58:22.559413+00:00",
+      "at": "2026-08-02T14:43:20.453678+00:00",
       "from": "DISCOVERED",
-      "to": "STALLED",
-      "reason": "remediation owed but no push for 25.0d (limit 3d)",
-      "head_sha": "ee170011ab99af6e66a71d43367ae34694fbbe2f",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- bot threads: 2 open (chatgpt-codex-connector); no commits for 20m: last push 17m ago",
+      "head_sha": "f5fe14d587d1edac0b009566c87239729178e24e",
       "round": 0
     }
   ]
