@@ -4,7 +4,7 @@
   "number": 1966,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REMEDIATION",
+  "state": "REVIEWING",
   "head_sha": "a2f76a5f616212e1c93b676471be00cb2ccf4c37",
   "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
   "base_ref": "release-3.170.0",
@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": true,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-08-02T11:46:32.292647+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-08-02T08:29:09.143177+00:00",
-  "updated_at": "2026-08-02T11:04:55.948461+00:00",
+  "updated_at": "2026-08-02T12:07:17.259826+00:00",
   "history": [
     {
       "at": "2026-08-02T08:29:09.143087+00:00",
@@ -46,6 +46,14 @@
       "from": "WAITING_ON_BOTS",
       "to": "REMEDIATION",
       "reason": "loop 1 still running -- bot threads: 1 open (baz-reviewer)",
+      "head_sha": "a2f76a5f616212e1c93b676471be00cb2ccf4c37",
+      "round": 0
+    },
+    {
+      "at": "2026-08-02T11:46:32.292647+00:00",
+      "from": "REMEDIATION",
+      "to": "REVIEWING",
+      "reason": "agent iteration in progress",
       "head_sha": "a2f76a5f616212e1c93b676471be00cb2ccf4c37",
       "round": 0
     }

@@ -1,12 +1,12 @@
 {
-  "key": "stepscode/steps-server#1756",
+  "key": "stepscode/steps-server#1954",
   "repo": "stepscode/steps-server",
-  "number": 1756,
+  "number": 1954,
   "author": "8Gaston8",
   "mode": "full_loop",
-  "state": "STALLED",
-  "head_sha": "2ea744005eb47fc0658d5b6351a995fa1b46d197",
-  "base_sha": "b418c8fb2a15e2c14a176dee6b6beb5ad55af1ee",
+  "state": "WAITING_ON_BOTS",
+  "head_sha": "1094f67b9b4eedc9e3c610b2068494b37775fcbc",
+  "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
   "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
@@ -27,18 +27,18 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": "2026-07-27T15:58:28.146829+00:00",
+  "bot_threads_clear_since": "2026-08-02T11:56:55.629675+00:00",
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-07-27T15:58:28.147008+00:00",
-  "updated_at": "2026-08-02T12:07:26.864342+00:00",
+  "created_at": "2026-08-02T11:56:55.629790+00:00",
+  "updated_at": "2026-08-02T12:07:17.362577+00:00",
   "history": [
     {
-      "at": "2026-07-27T15:58:28.146829+00:00",
+      "at": "2026-08-02T11:56:55.629675+00:00",
       "from": "DISCOVERED",
-      "to": "STALLED",
-      "reason": "no push for 33.0d (limit 3d) -- backlog, not forward-only traffic",
-      "head_sha": "2ea744005eb47fc0658d5b6351a995fa1b46d197",
+      "to": "WAITING_ON_BOTS",
+      "reason": "waiting on chatgpt-codex-connector (12m since push)",
+      "head_sha": "1094f67b9b4eedc9e3c610b2068494b37775fcbc",
       "round": 0
     }
   ]
