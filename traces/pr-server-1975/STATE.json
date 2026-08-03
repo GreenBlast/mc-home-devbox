@@ -1,13 +1,13 @@
 {
-  "key": "stepscode/steps-server#1970",
+  "key": "stepscode/steps-server#1975",
   "repo": "stepscode/steps-server",
-  "number": 1970,
+  "number": 1975,
   "author": "aviadsteps",
   "mode": "review_only",
-  "state": "REVIEWING",
-  "head_sha": "10cc7a7cca3d5ea09cd7ad00775511a2bf8fc2fe",
-  "base_sha": "3ecd616ca4ac24c78dfd99a66ae1021f1217f172",
-  "base_ref": "release-3.170.0",
+  "state": "REMEDIATION",
+  "head_sha": "b3bb0489e66be3331faa0a3a64a356569d6dad09",
+  "base_sha": "f74581c9b4495a78e53f2dc15c171c9e7c5661c5",
+  "base_ref": "develop",
   "reviewed_shas": [],
   "round": 0,
   "open_findings": [],
@@ -30,15 +30,15 @@
   "bot_threads_clear_since": null,
   "posted_keys": [],
   "held": false,
-  "created_at": "2026-08-02T12:38:31.608087+00:00",
-  "updated_at": "2026-08-03T10:19:10.895313+00:00",
+  "created_at": "2026-08-03T10:19:10.760540+00:00",
+  "updated_at": "2026-08-03T10:19:10.760554+00:00",
   "history": [
     {
-      "at": "2026-08-02T12:38:31.607965+00:00",
+      "at": "2026-08-03T10:19:10.760428+00:00",
       "from": "DISCOVERED",
-      "to": "REVIEWING",
-      "reason": "agent iteration in progress",
-      "head_sha": "c2d720ca3dcf9dbeabd11432d9250e840ecf9784",
+      "to": "REMEDIATION",
+      "reason": "loop 1 still running -- bot threads: 4 open (baz-reviewer, chatgpt-codex-connector)",
+      "head_sha": "b3bb0489e66be3331faa0a3a64a356569d6dad09",
       "round": 0
     }
   ]
