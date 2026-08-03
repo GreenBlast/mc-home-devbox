@@ -5,7 +5,7 @@
   "author": "aviadsteps",
   "mode": "review_only",
   "state": "REMEDIATION",
-  "head_sha": "b3bb0489e66be3331faa0a3a64a356569d6dad09",
+  "head_sha": "b94ec8e3800f10e8eb943b5bb228e82aa29b385d",
   "base_sha": "f74581c9b4495a78e53f2dc15c171c9e7c5661c5",
   "base_ref": "develop",
   "reviewed_shas": [],
@@ -31,7 +31,7 @@
   "posted_keys": [],
   "held": false,
   "created_at": "2026-08-03T10:19:10.760540+00:00",
-  "updated_at": "2026-08-03T10:19:10.760554+00:00",
+  "updated_at": "2026-08-03T11:11:19.159510+00:00",
   "history": [
     {
       "at": "2026-08-03T10:19:10.760428+00:00",
