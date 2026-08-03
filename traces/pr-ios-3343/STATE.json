@@ -27,11 +27,11 @@
   "enrolled_by": "poller",
   "schema_version": 1,
   "self_authored": false,
-  "bot_threads_clear_since": null,
+  "bot_threads_clear_since": "2026-08-03T02:20:17.142447+00:00",
   "posted_keys": [],
   "held": false,
   "created_at": "2026-07-27T15:58:36.019780+00:00",
-  "updated_at": "2026-08-03T02:09:54.349510+00:00",
+  "updated_at": "2026-08-03T03:12:14.590699+00:00",
   "history": [
     {
       "at": "2026-07-27T15:58:36.019556+00:00",
