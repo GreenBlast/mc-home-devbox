@@ -1,1 +1,4 @@
-9	%0	Main:1	personal	nosignal	1357	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+9	%0	Main:1	personal	nosignal	1418	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+2	%15	Main:2	personal	needs	24	0	0	e1e82b41-bee0-4077-9e55-e7cd64d62d95	-	Investigate Grafana alert	0	say whether to run the taskwarrior git gc or slim the hebcal Dockerfile
+9	%16	Main:3	personal	nosignal	28	0	0	fae30d2e-034f-4921-9d04-57e0c964ca32	-	Set up Grafana service account on SOPS broker	0	Set up Grafana service account on SOPS broker
+2	%17	Main:4	personal	needs	15	0	0	23c04f72-5e7c-486a-833c-b996ff3885ee	-	Fix vim access on Docker host	0	tell me whether to commit and push that dotfiles change
