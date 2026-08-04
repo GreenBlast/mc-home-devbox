@@ -1,0 +1,750 @@
+diff --git a/AtlyTests/AtlyPlusLongQuizViewModelTests.swift b/AtlyTests/AtlyPlusLongQuizViewModelTests.swift
+index 6efb035bff..17c0f7fbb6 100644
+--- a/AtlyTests/AtlyPlusLongQuizViewModelTests.swift
++++ b/AtlyTests/AtlyPlusLongQuizViewModelTests.swift
+@@ -64,6 +64,7 @@ final class AtlyPlusLongQuizViewModelTests: XCTestCase {
+         XCTAssertEqual(completedStateBeforeCallback, personalizationService.longQuizState())
+         XCTAssertEqual(completedHomePersonalizationBeforeCallback, personalizationService.homeQuizPersonalization())
+         XCTAssertTrue(pendingFramingBypassBeforeCallback)
++        XCTAssertTrue(personalizationService.hasQualifyingGuidedFirstSessionEntry())
+         XCTAssertFalse(personalizationService.hasConsumedGuidedFirstSession())
+         XCTAssertEqual(personalizationService.guidedFirstSessionGenerationAttempts(), 0)
+         XCTAssertEqual(completedStateBeforeCallback?.variant, "long_quiz")
+diff --git a/AtlyTests/AtlyPlusPersonalizationServiceTests.swift b/AtlyTests/AtlyPlusPersonalizationServiceTests.swift
+index 487770623c..213f3718d6 100644
+--- a/AtlyTests/AtlyPlusPersonalizationServiceTests.swift
++++ b/AtlyTests/AtlyPlusPersonalizationServiceTests.swift
+@@ -369,6 +369,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+         sut.setHomeQuizPersonalization(homePersonalization)
+         sut.setPendingLongQuizPostSignupFramingBypass(true)
+         sut.setPendingShortQuizPostSignupWelcome(true)
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         sut.setHasConsumedGuidedFirstSession(true)
+         sut.setGuidedFirstSessionGenerationAttempts(2)
+ 
+@@ -386,6 +387,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+         XCTAssertEqual(sut.homeQuizPersonalization(), homePersonalization)
+         XCTAssertTrue(sut.hasPendingLongQuizPostSignupFramingBypass())
+         XCTAssertTrue(sut.hasPendingShortQuizPostSignupWelcome())
++        XCTAssertTrue(sut.hasQualifyingGuidedFirstSessionEntry())
+         XCTAssertTrue(sut.hasConsumedGuidedFirstSession())
+         XCTAssertEqual(sut.guidedFirstSessionGenerationAttempts(), 2)
+         XCTAssertNil(sut.restoreRelease436StateAfterInternalQA())
+@@ -598,17 +600,21 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+ 
+     func testGuidedFirstSessionConsumptionAndRetryStateRoundTripsAndErases() async throws {
+         XCTAssertFalse(sut.hasConsumedGuidedFirstSession())
++        XCTAssertFalse(sut.hasQualifyingGuidedFirstSessionEntry())
+         XCTAssertEqual(sut.guidedFirstSessionGenerationAttempts(), 0)
+ 
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         sut.setHasConsumedGuidedFirstSession(true)
+         sut.setGuidedFirstSessionGenerationAttempts(2)
+         sut = AtlyPlusPersonalizationService(codableStorage: storage)
+ 
++        XCTAssertTrue(sut.hasQualifyingGuidedFirstSessionEntry())
+         XCTAssertTrue(sut.hasConsumedGuidedFirstSession())
+         XCTAssertEqual(sut.guidedFirstSessionGenerationAttempts(), 2)
+ 
+         try await sut.eraseCachedData()
+ 
++        XCTAssertFalse(sut.hasQualifyingGuidedFirstSessionEntry())
+         XCTAssertFalse(sut.hasConsumedGuidedFirstSession())
+         XCTAssertEqual(sut.guidedFirstSessionGenerationAttempts(), 0)
+     }
+@@ -641,6 +647,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+     @MainActor
+     func testGuidedFirstSessionEligibilityFailsClosedForEveryLocalPredicate() async {
+         let completeState = guidedLongQuizState()
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+ 
+         await assertResolution(
+             makeGuidedService(gateEnabled: false, state: completeState),
+@@ -660,11 +667,20 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+             equals: .fallback(.missingExposure)
+         )
+ 
+-        sut.setLongQuizState(completeState)
++        sut.setHasQualifyingGuidedFirstSessionEntry(false)
+         sut.setHasConsumedGuidedFirstSession(true)
+-        await assertResolution(makeGuidedService(state: completeState), equals: .fallback(.consumed))
++        await assertResolution(
++            makeGuidedService(state: completeState),
++            equals: .fallback(.consumed)
++        )
+ 
+         sut.setHasConsumedGuidedFirstSession(false)
++        await assertResolution(
++            makeGuidedService(state: completeState),
++            equals: .fallback(.unqualifiedEntry)
++        )
++
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         var incompleteSelections = completeGuidedJourneySelections()
+         incompleteSelections.removeValue(forKey: "PLUS_FRESHNESS_001")
+         await assertResolution(
+@@ -754,6 +770,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+ 
+     @MainActor
+     func testGuidedFirstSessionAcceptsOnlyAValidReadyResponseAndConsumesExplicitly() async {
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         let hero = GuidedFirstSession.Hero(
+             query: "quiet laptop cafe",
+             hook: "Chosen for your work style",
+@@ -784,6 +801,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+ 
+     @MainActor
+     func testGuidedFirstSessionRejectsNoHeroMalformedAndFailedResponses() async {
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         let noHero = makeGuidedService(
+             state: guidedLongQuizState(),
+             response: .init(
+@@ -826,6 +844,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+     func testGuidedFirstSessionCancellationDoesNotConsumeRetryBudget() async {
+         let flags = FeatureFlagsServiceProtocolMock()
+         flags.featureFlagValueForFallbackValueReturnValue = .bool(true)
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         sut.setLongQuizState(guidedLongQuizState())
+         let service = GuidedFirstSessionService(
+             featureFlagsService: flags,
+@@ -848,6 +867,7 @@ final class AtlyPlusPersonalizationServiceTests: XCTestCase {
+     func testGuidedFirstSessionTimeoutCancelsRequestAndConsumesOneRetry() async {
+         let flags = FeatureFlagsServiceProtocolMock()
+         flags.featureFlagValueForFallbackValueReturnValue = .bool(true)
++        sut.setHasQualifyingGuidedFirstSessionEntry(true)
+         sut.setLongQuizState(guidedLongQuizState())
+         let service = GuidedFirstSessionService(
+             featureFlagsService: flags,
+diff --git a/AtlyTests/FollowUpResultsSheetViewModelTests.swift b/AtlyTests/FollowUpResultsSheetViewModelTests.swift
+index 3a3524f197..69bb74593a 100644
+--- a/AtlyTests/FollowUpResultsSheetViewModelTests.swift
++++ b/AtlyTests/FollowUpResultsSheetViewModelTests.swift
+@@ -154,6 +154,7 @@ final class FollowUpResultsSheetViewModelTests: XCTestCase {
+             .fallback(.gateOff),
+             .fallback(.missingLongQuiz),
+             .fallback(.unqualifiedAssignment),
++            .fallback(.unqualifiedEntry),
+             .fallback(.missingExposure),
+             .fallback(.incompleteJourney),
+         ]
+diff --git a/AtlyTests/UITestHelperTests.swift b/AtlyTests/UITestHelperTests.swift
+index 4ef909cb4c..9eeb2bd1b8 100644
+--- a/AtlyTests/UITestHelperTests.swift
++++ b/AtlyTests/UITestHelperTests.swift
+@@ -86,6 +86,30 @@ final class UITestHelperTests: XCTestCase {
+         XCTAssertNil(UITestHelper.personalizedHomeRowsFixture)
+     }
+ 
++    func testUnqualifiedGuidedFirstSessionFixtureSeedsCompleteMigratedStateWithoutAdmission() {
++        let suiteName = "UITestHelperTests.\(UUID().uuidString)"
++        let userDefaults = UserDefaults(suiteName: suiteName)!
++        defer { userDefaults.removePersistentDomain(forName: suiteName) }
++        UITestHelper.launchArgumentsOverride = [
++            "-UITestMode",
++            "YES",
++            "-UITestSeedUnqualifiedGuidedFirstSessionState",
++            "YES",
++        ]
++        let personalizationService = AtlyPlusPersonalizationService(
++            codableStorage: userDefaults
++        )
++
++        UITestHelper.applyUnqualifiedGuidedFirstSessionFixtureForTesting(
++            personalizationService: personalizationService
++        )
++
++        XCTAssertEqual(personalizationService.longQuizState()?.assignmentSource, "server")
++        XCTAssertNotNil(personalizationService.longQuizState()?.renderedExposureAt)
++        XCTAssertFalse(personalizationService.hasQualifyingGuidedFirstSessionEntry())
++        XCTAssertFalse(personalizationService.hasConsumedGuidedFirstSession())
++    }
++
+     func testAbsentPersonalizedRowsFixtureClearsPersistedUITestPersonalization() {
+         let suiteName = "UITestHelperTests.\(UUID().uuidString)"
+         let userDefaults = UserDefaults(suiteName: suiteName)!
+diff --git a/AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift b/AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift
+index 4151d6cdd8..c671504fd5 100644
+--- a/AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift
++++ b/AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift
+@@ -16,6 +16,48 @@ final class AtlyPlusOnboardingChromeTests: XCTestCase {
+         try super.tearDownWithError()
+     }
+ 
++    func testEstablishedUserWithMigratedQuizStateNeverReentersGuidedFirstSession() throws {
++        let tokens = try XCTUnwrap(
++            localQASessionTokens(),
++            "Expected Doppler-managed ATLY_ACCESS_TOKEN for the established-account regression"
++        )
++        var launchArguments: [(String, String)] = [
++            ("-UITestMode", "YES"),
++            ("-UITestThemePreference", "light"),
++            ("-UITestAccessToken", tokens.accessToken),
++            ("-UITestForceAtlyPlusHome", "YES"),
++            ("-UITestSubscribedAtlyPlus", "YES"),
++            ("-UITestUseOnlyFakeSubscriptions", "YES"),
++            ("-UITestGuidedFirstSessionEnabled", "YES"),
++            ("-UITestSeedUnqualifiedGuidedFirstSessionState", "YES"),
++            ("-UITestHideThemeSwitcherOverlay", "YES"),
++        ]
++        if let refreshToken = tokens.refreshToken {
++            launchArguments.append(("-UITestRefreshToken", refreshToken))
++        }
++        app.launchArguments = applyingUITestLaunchArguments(launchArguments, to: [])
++
++        for launch in 1 ... 2 {
++            app.launch()
++            app.dismissAppleAccountVerificationIfNeeded()
++
++            XCTAssertTrue(
++                app.staticTexts["Trending collections"].waitForExistence(timeout: 45),
++                "Launch \(launch) should reach ordinary Home for the established account"
++            )
++            XCTAssertTrue(
++                app.otherElements["guided_first_session_unqualified_entry_state"]
++                    .waitForExistence(timeout: 15),
++                "Launch \(launch) must resolve the migrated-state fixture as unqualified entry"
++            )
++            XCTAssertFalse(
++                element("guided_first_session_hero_title").waitForExistence(timeout: 15),
++                "Launch \(launch) must not admit migrated quiz state into the guided first session"
++            )
++            app.terminate()
++        }
++    }
++
+     func testAtlyPlusOnboardingShowsChoiceProgressBarAndPreservesBackNavigation() throws {
+         app.launchArguments = applyingUITestLaunchArguments(
+             [
+diff --git a/REGRESSION_TESTING_PLAN.md b/REGRESSION_TESTING_PLAN.md
+index 47357d35b4..c9b768bdca 100644
+--- a/REGRESSION_TESTING_PLAN.md
++++ b/REGRESSION_TESTING_PLAN.md
+@@ -178,7 +178,7 @@ Run the smoke pack on every release and before widening any failed regression in
+ | ONB-001 | Case 5b | Auth | Atly Plus onboarding chrome | Onboarding choice and pre-pricing chrome remain clean | Atly Plus onboarding path | Navigate forward and backward around choice and pre-pricing screens | Chrome is visible, stable, and back navigation is sane | Evergreen UI test | `AtlyPlusOnboardingChromeTests.swift` | Active |
+ | ONB-003 | Case 5g | Auth | Atly Plus long quiz | A long-quiz assignment creates a useful local profile and reaches the real paywall safely | Forced QA `long_quiz` assignment; no onboarding-search endpoint | Complete the persona, timing, mission, applicable detail, location, preview, and profile-reveal route | Only applicable branch questions appear; stable IDs drive the local preview/profile; no raw answer text or precise location is persisted; reveal continues to the real Atly Plus paywall | Evergreen UI test plus manual visual QA | `AtlyPlusOnboardingChromeTests.swift` long-quiz assertions and screenshot sequence | Active |
+ | ONB-004 | Case 5h | Auth | Atly Plus short quiz | A short-quiz assignment completes the compact preference flow, reaches the real paywall, and shows only the existing welcome after signup | Forced QA `short_quiz` assignment; framing kill switch enabled; fake subscription and fresh-signup completion hooks | Complete all three short questions, persuasion screens, profile reveal, real paywall, and fresh signup | Stable IDs drive the short profile; the prototype paywall is absent; the real paywall appears; post-signup shows the existing welcome without the remaining framing phases | Evergreen UI test plus manual visual QA | `AtlyPlusOnboardingChromeTests.testShortQuizPathStartsImmediatelyAndReachesRealPaywallThenWelcome` and screenshot sequence | Active |
+-| ONB-005 | Case 5i | Auth | Guided first session | Long-quiz users get one deterministic post-trial welcome and personalized first search with bounded result highlights | Forced QA `long_quiz` assignment and deterministic highlight showcase | Complete the long quiz and fresh-signup hook; inspect result cards with zero, one, and two valid previews | Existing girl-collage welcome says `SHOW ME AROUND`; later framing is suppressed; cards preserve fallback metadata or show ordered positive/trade-off pills without truncation | Evergreen UI tests plus manual visual QA | `AtlyPlusOnboardingChromeTests.testInternalQALongQuizPathReachesRealPaywallAndShowsGuidedWelcome` and `testGuidedResultHighlightsRenderZeroOneAndTwoPreviewStates` | Active |
++| ONB-005 | Case 5i | Auth | Guided first session | Qualifying new long-quiz users get one deterministic post-trial welcome and personalized first search; established users with migrated quiz state stay on ordinary Home | Forced QA `long_quiz` assignment, deterministic highlight showcase, and established-account stale-state fixture | Complete the long quiz and fresh-signup hook; inspect result cards; relaunch the established-account fixture twice | Fresh users see `SHOW ME AROUND` and bounded highlights; established users never see the guided Hero on either launch | Evergreen UI tests plus manual visual QA | `AtlyPlusOnboardingChromeTests.testInternalQALongQuizPathReachesRealPaywallAndShowsGuidedWelcome`, `testGuidedResultHighlightsRenderZeroOneAndTwoPreviewStates`, and `testEstablishedUserWithMigratedQuizStateNeverReentersGuidedFirstSession` | Active |
+ | PAY-001 | Case 5c | Subscription | Intro-offer paywall | Eligible user sees correct intro-offer CTA and copy | Intro-offer eligible account or stubbed eligibility | Reach Atly Plus paywall | CTA and copy match intro-offer eligibility | Evergreen UI test | `AtlyPlusPaywallIntroOfferTests.swift` | Active |
+ | PAY-002 | Case 5d | Subscription | Shared paywall social proof | Social-proof copy stays aligned across paywall variants | Atly Plus, More Plans, and GFE paywall entry points | Open each paywall variant | Social-proof copy is consistent and not stale | Evergreen UI test | `SharedPaywallSocialProofCopyTests.swift` | Active |
+ | PAY-003 | Case 5e | Subscription | Pricing exit winback | User can leave signup pricing after seeing winback | Signup pricing path | Attempt to exit pricing | Winback appears and exit remains possible | Evergreen UI test | `AtlyPlusPricingExitWinbackTests.swift` | Active |
+diff --git a/STEPS.xcodeproj/project.pbxproj b/STEPS.xcodeproj/project.pbxproj
+index dcc0b549a1..e7a4470bdd 100644
+--- a/STEPS.xcodeproj/project.pbxproj
++++ b/STEPS.xcodeproj/project.pbxproj
+@@ -1943,7 +1943,7 @@
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.atly.AtlyTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = iphoneos;
+-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
++				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ATLY_APPFLOW_TEST_SHIMS $(inherited)";
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+ 				SWIFT_VERSION = 5.0;
+@@ -2010,6 +2010,7 @@
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.atly.AtlyTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = iphoneos;
++				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ATLY_APPFLOW_TEST_SHIMS $(inherited)";
+ 				SWIFT_COMPILATION_MODE = wholemodule;
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 5.0;
+@@ -2077,6 +2078,7 @@
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.atly.AtlyTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = iphoneos;
++				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ATLY_APPFLOW_TEST_SHIMS $(inherited)";
+ 				SWIFT_COMPILATION_MODE = wholemodule;
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 5.0;
+@@ -2144,6 +2146,7 @@
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.atly.AtlyTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SDKROOT = iphoneos;
++				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ATLY_APPFLOW_TEST_SHIMS $(inherited)";
+ 				SWIFT_COMPILATION_MODE = wholemodule;
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 5.0;
+diff --git a/Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift b/Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift
+index 72c24f9892..c99b34006f 100644
+--- a/Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift
++++ b/Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift
+@@ -115,6 +115,11 @@ struct FollowUpResultsSheetView: View {
+         }
+     }
+ 
++    private var shouldExposeUnqualifiedEntryUITestState: Bool {
++        UITestHelper.shouldSeedUnqualifiedGuidedFirstSessionStateForTesting
++            && viewModel.guidedFirstSessionState == .fallback(.unqualifiedEntry)
++    }
++
+     var body: some View {
+         GeometryReader { geometry in
+             ZStack(alignment: .top) {
+@@ -221,6 +226,13 @@ struct FollowUpResultsSheetView: View {
+                             for: viewModel.guidedFirstSessionState
+                         )
+                 )
++
++                if shouldExposeUnqualifiedEntryUITestState {
++                    Color.white.opacity(0.001)
++                        .frame(width: 1, height: 1)
++                        .accessibilityElement()
++                        .accessibilityIdentifier("guided_first_session_unqualified_entry_state")
++                }
+             }
+             .coordinateSpace(name: "FollowUpRootSpace")
+             .overlayPreferenceValue(GuidedFirstSessionSearchFieldAnchorKey.self) { anchor in
+diff --git a/Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift b/Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift
+index ce4d4a1c1c..4b1b81de5c 100644
+--- a/Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift
++++ b/Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift
+@@ -451,7 +451,8 @@ final class FollowUpResultsSheetViewModel: ObservableObject {
+         case .awaitingSearchStart, .ready, .resolving, .results, .returnedFromProfile, .submitting: true
+         case let .fallback(reason):
+             switch reason {
+-            case .gateOff, .incompleteJourney, .missingExposure, .missingLongQuiz, .unqualifiedAssignment:
++            case .gateOff, .incompleteJourney, .missingExposure, .missingLongQuiz, .unqualifiedAssignment,
++                 .unqualifiedEntry:
+                 false
+             case .cancelled, .consumed, .malformedResponse, .noQualifyingHero, .requestFailed, .retryExhausted,
+                  .searchFailed, .timeout:
+diff --git a/Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift b/Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift
+index 1f31492989..fa2dc5a014 100644
+--- a/Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift
++++ b/Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift
+@@ -800,6 +800,7 @@ final class AtlyPlusLongQuizViewModel: ObservableObject {
+             quizVersion: GuidedFirstSession.quizVersion
+         )
+         personalizationService.setLongQuizState(state)
++        personalizationService.setHasQualifyingGuidedFirstSessionEntry(true)
+         personalizationService.setHasConsumedGuidedFirstSession(false)
+         personalizationService.setGuidedFirstSessionGenerationAttempts(0)
+         personalizationService.setHomeQuizPersonalization(
+diff --git a/Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift b/Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift
+index 1f69bba56d..c2675f6cea 100644
+--- a/Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift	
++++ b/Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift	
+@@ -374,6 +374,7 @@ final class ProfileMenuViewModel: ObservableObject {
+         personalizationService.setShortQuizState(nil)
+         personalizationService.setPendingLongQuizPostSignupFramingBypass(false)
+         personalizationService.setPendingShortQuizPostSignupWelcome(false)
++        personalizationService.setHasQualifyingGuidedFirstSessionEntry(false)
+         personalizationService.setHasConsumedGuidedFirstSession(false)
+         personalizationService.setGuidedFirstSessionGenerationAttempts(0)
+         updatePreservingLocalFlags { localFlags in
+@@ -478,6 +479,7 @@ final class ProfileMenuViewModel: ObservableObject {
+         }
+         personalizationService.setPendingLongQuizPostSignupFramingBypass(false)
+         personalizationService.setPendingShortQuizPostSignupWelcome(false)
++        personalizationService.setHasQualifyingGuidedFirstSessionEntry(false)
+         navHandler(.release436QAStateReset)
+     }
+ 
+diff --git a/Steps/AppFlows/Root/RootViewModel.swift b/Steps/AppFlows/Root/RootViewModel.swift
+index e1288dd7f4..12de512b73 100644
+--- a/Steps/AppFlows/Root/RootViewModel.swift
++++ b/Steps/AppFlows/Root/RootViewModel.swift
+@@ -482,8 +482,9 @@ final class RootViewModel {
+            case .shouldLoginUsingToken = action
+         {
+             if isAuthorized {
+-                // Log out current user so we can log in with the new token
+-                await dependencies.authRepository.logout()
++                // Use the canonical logout path so account-scoped caches are erased
++                // before the new token starts a different user's onboarding session.
++                await dependencies.logoutService.logout()
+             }
+             // Always go to onboarding flow for login token actions
+             return await .onboarding(onboardingFlow(from: appLifeCycleEvent))
+diff --git a/Steps/AppFlows/Root/RootViewModelTests.swift b/Steps/AppFlows/Root/RootViewModelTests.swift
+index a34e9a198f..0ed37aba94 100644
+--- a/Steps/AppFlows/Root/RootViewModelTests.swift
++++ b/Steps/AppFlows/Root/RootViewModelTests.swift
+@@ -452,6 +452,40 @@
+             }
+         }
+ 
++        func testHandleExternalActionLoginLogsOutAuthorizedUserThroughCanonicalService() async throws {
++            // Given
++            authApiMock.isAuthorizedReturnValue = true
++            logoutServiceMock.shouldWaitForCompletion = true
++            let token = "new_account_token"
++            let externalAction = ExternalAction.shouldLoginUsingToken(token)
++
++            // When
++            createSUT()
++            await Task.yield()
++            externalActionsHandler.addAction(externalAction)
++            await testClock.advance(by: .milliseconds(600))
++            await Task.yield()
++            await waitUntil { self.logoutServiceMock.logoutCalled }
++
++            // Then: routing remains blocked until account-scoped cleanup completes.
++            XCTAssertTrue(
++                logoutServiceMock.logoutCalled,
++                "Expected account switching to erase account-scoped state through LogoutService"
++            )
++            XCTAssertNil(receivedNavigationAction)
++
++            logoutServiceMock.finishLogout()
++            await waitUntil { self.receivedNavigationAction != nil }
++
++            if case let .onboarding(state) = receivedNavigationAction,
++               case let .login(receivedToken) = state
++            {
++                XCTAssertEqual(receivedToken, token)
++            } else {
++                XCTFail("Expected cleanup to finish before new-account login routing")
++            }
++        }
++
+         func testHandleExternalActionShowAtlyPlus() async throws {
+             // Given
+             authApiMock.isAuthorizedReturnValue = false
+@@ -991,9 +1025,21 @@
+     final class LogoutServiceMock: LogoutService {
+         var logoutCallsCount = 0
+         var logoutCalled: Bool { logoutCallsCount > 0 }
++        var shouldWaitForCompletion = false
++        private var completionContinuation: CheckedContinuation<Void, Never>?
+ 
+         func logout() async {
+             logoutCallsCount += 1
++            guard shouldWaitForCompletion else { return }
++            await withCheckedContinuation { continuation in
++                completionContinuation = continuation
++            }
++        }
++
++        func finishLogout() {
++            shouldWaitForCompletion = false
++            completionContinuation?.resume()
++            completionContinuation = nil
+         }
+     }
+ 
+diff --git a/Steps/AppServices/AppServices.swift b/Steps/AppServices/AppServices.swift
+index a1a92874cb..bb6b67ef27 100644
+--- a/Steps/AppServices/AppServices.swift
++++ b/Steps/AppServices/AppServices.swift
+@@ -147,6 +147,7 @@ enum LogoutServiceKey: DependencyKey {
+         @Dependency(\.purchaseService) var purchaseService
+         @Dependency(\.mapsRepository) var mapsRepository
+         @Dependency(\.placesRepository) var placesRepository
++        @Dependency(\.atlyPlusPersonalizationService) var atlyPlusPersonalizationService
+         @Dependency(\.chatClient) var chatClient
+ 
+         return LogoutServiceImpl(
+@@ -161,6 +162,7 @@ enum LogoutServiceKey: DependencyKey {
+                 sessionService,
+                 placesRepository,
+                 mapsRepository,
++                atlyPlusPersonalizationService,
+                 userRepository,
+             ]
+         )
+diff --git a/Steps/Helpers/UITestHelper.swift b/Steps/Helpers/UITestHelper.swift
+index 6574766510..ae7efcb94c 100644
+--- a/Steps/Helpers/UITestHelper.swift
++++ b/Steps/Helpers/UITestHelper.swift
+@@ -117,6 +117,8 @@ enum UITestHelper {
+     private static let homeSearchFieldVariantArgument = "-UITestHomeSearchFieldVariant"
+     private static let designYourMapReturnChromeEnabledArgument = "-UITestDesignYourMapReturnChromeEnabled"
+     private static let guidedFirstSessionEnabledArgument = "-UITestGuidedFirstSessionEnabled"
++    private static let seedUnqualifiedGuidedFirstSessionStateArgument =
++        "-UITestSeedUnqualifiedGuidedFirstSessionState"
+     private static let seedLegacyCategoryCombinationRecentArgument = "-UITestSeedLegacyCategoryCombinationRecent"
+     private static let personalizedHomeRowsArgument = "-UITestPersonalizedHomeRows"
+     private static let personalizedHomeRowsOverrideSeededKey = "uitest_personalized_home_rows_override_seeded"
+@@ -482,6 +484,11 @@ enum UITestHelper {
+         boolValue(forLaunchArgument: guidedFirstSessionEnabledArgument)
+     }
+ 
++    static var shouldSeedUnqualifiedGuidedFirstSessionStateForTesting: Bool {
++        guard isUITestMode else { return false }
++        return boolValue(forLaunchArgument: seedUnqualifiedGuidedFirstSessionStateArgument) ?? false
++    }
++
+     static var shouldEnableSearchAutoZoomForTesting: Bool? {
+         boolValue(forLaunchArgument: searchAutoZoomEnabledArgument)
+     }
+@@ -560,6 +567,7 @@ enum UITestHelper {
+             personalizedHomeRowsFixture,
+             personalizationService: personalizationService
+         )
++        applyUnqualifiedGuidedFirstSessionFixtureForTesting(personalizationService: personalizationService)
+ 
+         applyTestingConfiguration(
+             themePreference: themePreference,
+@@ -595,6 +603,46 @@ enum UITestHelper {
+         userDefaults.set(fixture != nil, forKey: personalizedHomeRowsOverrideSeededKey)
+     }
+ 
++    static func applyUnqualifiedGuidedFirstSessionFixtureForTesting(
++        personalizationService: any AtlyPlusPersonalizationServiceProtocol
++    ) {
++        guard shouldSeedUnqualifiedGuidedFirstSessionStateForTesting else { return }
++
++        personalizationService.setLongQuizState(
++            .init(
++                variant: AtlyPlusQuizOnboardingVariant.longQuiz.rawValue,
++                experimentKey: ServerExperimentKey.atlyPlusQuizOnboarding.rawValue,
++                launchDarklyFlagKey: FeatureFlagKey.mobile_atly_plus_quiz_onboarding.rawValue,
++                assignmentSource: AtlyPlusQuizOnboardingAssignment.Source.server.rawValue,
++                selectedOptionIDsByQuestionID: [
++                    "persona": ["coworkers"],
++                    "timing": ["mornings"],
++                    "mission": ["work", "coffee", "social"],
++                    "mission-priority": ["coffee", "social"],
++                    "coffee-mission": ["great_coffee"],
++                    "social-mission": ["happy_hour"],
++                    "social-details": ["lively"],
++                    "PLUS_LOCATION_FOCUS_001": ["near_me"],
++                    "PLUS_DISTANCE_001": ["few_blocks"],
++                    "PLUS_CHOICE_STYLE_001": ["one_best_pick"],
++                    "PLUS_ATMOSPHERE_001": ["relaxed"],
++                    "PLUS_NOISE_001": ["moderate"],
++                    "PLUS_RUINS_001": ["vague"],
++                    "PLUS_DETAIL_PRIORITIES_001": ["coffee"],
++                    "PLUS_FRESHNESS_001": ["weekly"],
++                ],
++                missionBranchIDs: ["work", "coffee", "social"],
++                locationPreferenceID: "near_me",
++                completedAt: Date(timeIntervalSince1970: 1),
++                renderedExposureAt: Date(timeIntervalSince1970: 2),
++                quizVersion: GuidedFirstSession.quizVersion
++            )
++        )
++        personalizationService.setHasQualifyingGuidedFirstSessionEntry(false)
++        personalizationService.setHasConsumedGuidedFirstSession(false)
++        personalizationService.setGuidedFirstSessionGenerationAttempts(0)
++    }
++
+     static func clearPersistedPersonalizedHomeRowsTestingStateIfNeeded(
+         featureFlagsService: any FeatureFlagsServiceProtocol,
+         personalizationService: any AtlyPlusPersonalizationServiceProtocol,
+diff --git a/Steps/Services/AtlyPlusPersonalizationService.swift b/Steps/Services/AtlyPlusPersonalizationService.swift
+index 77cccb7ac7..f1ba44f55c 100644
+--- a/Steps/Services/AtlyPlusPersonalizationService.swift
++++ b/Steps/Services/AtlyPlusPersonalizationService.swift
+@@ -35,6 +35,8 @@ protocol AtlyPlusPersonalizationServiceProtocol: EraseCachedDataProtocol {
+     func setPendingShortQuizPostSignupWelcome(_ value: Bool)
+     func hasConsumedGuidedFirstSession() -> Bool
+     func setHasConsumedGuidedFirstSession(_ value: Bool)
++    func hasQualifyingGuidedFirstSessionEntry() -> Bool
++    func setHasQualifyingGuidedFirstSessionEntry(_ value: Bool)
+     func guidedFirstSessionGenerationAttempts() -> Int
+     func setGuidedFirstSessionGenerationAttempts(_ value: Int)
+     func markLongQuizGuidedWelcomeRendered()
+@@ -50,6 +52,8 @@ extension AtlyPlusPersonalizationServiceProtocol {
+     func setPendingShortQuizPostSignupWelcome(_: Bool) {}
+     func hasConsumedGuidedFirstSession() -> Bool { false }
+     func setHasConsumedGuidedFirstSession(_: Bool) {}
++    func hasQualifyingGuidedFirstSessionEntry() -> Bool { false }
++    func setHasQualifyingGuidedFirstSessionEntry(_: Bool) {}
+     func guidedFirstSessionGenerationAttempts() -> Int { 0 }
+     func setGuidedFirstSessionGenerationAttempts(_: Int) {}
+     func markLongQuizGuidedWelcomeRendered() {}
+@@ -232,6 +236,7 @@ private struct AtlyPlusRelease436InternalQAStateBackup: Codable {
+     let pendingLongQuizPostSignupFramingBypass: Bool
+     let pendingShortQuizPostSignupWelcome: Bool
+     let hasConsumedGuidedFirstSession: Bool
++    let hasQualifyingGuidedFirstSessionEntry: Bool?
+     let guidedFirstSessionGenerationAttempts: Int
+ }
+ 
+@@ -253,6 +258,7 @@ final class AtlyPlusPersonalizationService: AtlyPlusPersonalizationServiceProtoc
+         static let pendingLongQuizPostSignupFramingBypass = "atly_plus_pending_long_quiz_post_signup_framing_bypass"
+         static let pendingShortQuizPostSignupWelcome = "atly_plus_pending_short_quiz_post_signup_welcome"
+         static let hasConsumedGuidedFirstSession = "atly_plus_guided_first_session_consumed"
++        static let hasQualifyingGuidedFirstSessionEntry = "atly_plus_guided_first_session_qualified_entry"
+         static let guidedFirstSessionGenerationAttempts = "atly_plus_guided_first_session_generation_attempts"
+     }
+ 
+@@ -298,6 +304,7 @@ final class AtlyPlusPersonalizationService: AtlyPlusPersonalizationServiceProtoc
+         codableStorage.setCodable(false, forKey: Key.pendingLongQuizPostSignupFramingBypass)
+         codableStorage.setCodable(false, forKey: Key.pendingShortQuizPostSignupWelcome)
+         codableStorage.setCodable(false, forKey: Key.hasConsumedGuidedFirstSession)
++        codableStorage.setCodable(false, forKey: Key.hasQualifyingGuidedFirstSessionEntry)
+         codableStorage.setCodable(0, forKey: Key.guidedFirstSessionGenerationAttempts)
+     }
+ 
+@@ -442,6 +449,7 @@ final class AtlyPlusPersonalizationService: AtlyPlusPersonalizationServiceProtoc
+                 pendingLongQuizPostSignupFramingBypass: hasPendingLongQuizPostSignupFramingBypass(),
+                 pendingShortQuizPostSignupWelcome: hasPendingShortQuizPostSignupWelcome(),
+                 hasConsumedGuidedFirstSession: hasConsumedGuidedFirstSession(),
++                hasQualifyingGuidedFirstSessionEntry: hasQualifyingGuidedFirstSessionEntry(),
+                 guidedFirstSessionGenerationAttempts: guidedFirstSessionGenerationAttempts()
+             ),
+             forKey: Key.release436InternalQAStateBackup
+@@ -463,6 +471,7 @@ final class AtlyPlusPersonalizationService: AtlyPlusPersonalizationServiceProtoc
+         setPendingLongQuizPostSignupFramingBypass(backup.pendingLongQuizPostSignupFramingBypass)
+         setPendingShortQuizPostSignupWelcome(backup.pendingShortQuizPostSignupWelcome)
+         setHasConsumedGuidedFirstSession(backup.hasConsumedGuidedFirstSession)
++        setHasQualifyingGuidedFirstSessionEntry(backup.hasQualifyingGuidedFirstSessionEntry ?? false)
+         setGuidedFirstSessionGenerationAttempts(backup.guidedFirstSessionGenerationAttempts)
+ 
+         let emptyBackup: AtlyPlusRelease436InternalQAStateBackup? = nil
+@@ -495,6 +504,14 @@ final class AtlyPlusPersonalizationService: AtlyPlusPersonalizationServiceProtoc
+         codableStorage.setCodable(value, forKey: Key.hasConsumedGuidedFirstSession)
+     }
+ 
++    func hasQualifyingGuidedFirstSessionEntry() -> Bool {
++        codableStorage.codableValue(forKey: Key.hasQualifyingGuidedFirstSessionEntry) ?? false
++    }
++
++    func setHasQualifyingGuidedFirstSessionEntry(_ value: Bool) {
++        codableStorage.setCodable(value, forKey: Key.hasQualifyingGuidedFirstSessionEntry)
++    }
++
+     func guidedFirstSessionGenerationAttempts() -> Int {
+         codableStorage.codableValue(forKey: Key.guidedFirstSessionGenerationAttempts) ?? 0
+     }
+diff --git a/Steps/Services/GuidedFirstSessionService.swift b/Steps/Services/GuidedFirstSessionService.swift
+index 17abf196b2..6e6843d397 100644
+--- a/Steps/Services/GuidedFirstSessionService.swift
++++ b/Steps/Services/GuidedFirstSessionService.swift
+@@ -85,6 +85,7 @@ enum GuidedFirstSession {
+         case gateOff = "gate_off"
+         case missingLongQuiz = "missing_long_quiz"
+         case unqualifiedAssignment = "unqualified_assignment"
++        case unqualifiedEntry = "unqualified_entry"
+         case missingExposure = "missing_exposure"
+         case incompleteJourney = "incomplete_journey"
+         case consumed
+@@ -284,12 +285,19 @@ final class GuidedFirstSessionService: GuidedFirstSessionServiceProtocol {
+         guard allowedAssignmentSources.contains(state.assignmentSource) else {
+             return .fallback(.unqualifiedAssignment)
+         }
++        let isExplicitTestAssignment = [
++            AtlyPlusQuizOnboardingAssignment.Source.uiTest.rawValue,
++            AtlyPlusQuizOnboardingAssignment.Source.internalQA.rawValue,
++        ].contains(state.assignmentSource)
+         guard state.renderedExposureAt != nil else {
+             return .fallback(.missingExposure)
+         }
+         guard !personalizationService.hasConsumedGuidedFirstSession() else {
+             return .fallback(.consumed)
+         }
++        guard isExplicitTestAssignment || personalizationService.hasQualifyingGuidedFirstSessionEntry() else {
++            return .fallback(.unqualifiedEntry)
++        }
+         guard let journey = GuidedFirstSession.stableJourney(from: state) else {
+             return .fallback(.incompleteJourney)
+         }
+diff --git a/Steps/Services/LogoutService.swift b/Steps/Services/LogoutService.swift
+index a908be1f44..4d0b0faff7 100644
+--- a/Steps/Services/LogoutService.swift
++++ b/Steps/Services/LogoutService.swift
+@@ -67,15 +67,13 @@ final class LogoutServiceImpl: LogoutService {
+ 
+         // MARK: - Clear caches
+ 
+-        // Was moved to the separate task as result of eraseCachedData()
+-        // was visually noticable when doing logout via side menu
+-        Task {
+-            for dependency in self.dependencies {
+-                do {
+-                    try await dependency.eraseCachedData()
+-                } catch {
+-                    AppLogger.log(level: .error, error.loggingDescription)
+-                }
++        // Account switches must not proceed until account-scoped state is gone.
++        // Await each dependency so logout is a real cleanup boundary for every caller.
++        for dependency in dependencies {
++            do {
++                try await dependency.eraseCachedData()
++            } catch {
++                AppLogger.log(level: .error, error.loggingDescription)
+             }
+         }
+     }
+diff --git a/docs/exec-plans/active/3490-guided-first-session-eligibility.md b/docs/exec-plans/active/3490-guided-first-session-eligibility.md
+new file mode 100644
+index 0000000000..b6e98d1e5d
+--- /dev/null
++++ b/docs/exec-plans/active/3490-guided-first-session-eligibility.md
+@@ -0,0 +1,82 @@
++---
++issue: 3490
++title: Stop established users from re-entering the guided first session
++status: active
++priority: high
++owner: Hercules
++assignees: [8Gaston8]
++labels: [Atly Plus, Funnel: Activation, conductor:in-progress]
++branch: codex/3490-guided-first-session-eligibility
++repo: stepscode/steps-ios
++created: 2026-07-31
++last_updated: 2026-08-03
++template_version: 1
++current_focus: Publish this evidence-only plan reconciliation, then complete exact-source TestFlight for the resulting strict descendant and return it to Aviad for approval.
++---
++
++# Execution Plan: Guided first-session eligibility
++
++## Goal
++
++Show the guided first-session walkthrough only after a qualifying new-user long-quiz entry, while failing closed for established, upgraded, migrated, or ambiguous local state.
++
++## Acceptance Criteria
++
++| ID | Criterion | Status | Notes |
++|---|---|---|---|
++| AC-1 | A completed qualifying long quiz records durable admission before the signup handoff. | complete | The focused pack and both fresh-account journeys passed twice at exact product head `b20d12fb`. |
++| AC-2 | Existing long-quiz state without the marker is ineligible. | complete | Both established-account journeys stayed on ordinary Home at exact product head `b20d12fb`. |
++| AC-3 | Consumption, incomplete quiz state, missing exposure, and retry limits continue to fail closed. | complete | The 146/146 focused pack at `b20d12fb` pins consumed-state precedence and the complete eligibility matrix. |
++| AC-4 | Cache erasure clears admission; explicit internal QA and UI-test routes remain usable. | complete | Live logout now includes the personalization service, and warm-start token account switching routes through canonical logout instead of bypassing cache cleanup. |
++| AC-5 | Focused unit, native regression, and repeated-launch proof pass at the exact PR head. | complete | Exact-head proof at `b20d12fb` passed the root selector 1/1, focused units 146/146, established-user journeys 2/2, and fresh-account journeys 2/2. |
++
++## Implementation Approach
++
++- Persist a dedicated boolean admission marker alongside guided-session consumption state.
++- Set it only when the long quiz completes through the current onboarding flow.
++- Require it before resolving a production hero; allow only explicit internal-QA/UI-test assignments to bypass it.
++- Preserve it in the existing internal-QA backup and clear it during account cache erasure.
++
++## Constraints
++
++- Preserve lifecycle owner `019fb6d0-a2db-7291-aabe-dd10a3db9623` and require exact-head evidence for every native and TestFlight claim.
++- The owner-bound Beast campaign is terminally released; do not replay its offer, worker, or simulator lease.
++- Preserve Manual TestFlight run 1853 as exact evidence for `b20d12fb`; this plan-only reconciliation creates a distinct source head and therefore requires one fresh, deduplicated binding after run 1853 finishes.
++
++## Progress Log
++
++| Date | Session | Update | Next Step |
++|---|---|---|---|
++| 2026-07-31 | Hercules `019fb6d0-a2db-7291-aabe-dd10a3db9623` | Claimed the isolated iOS issue, bound the live Figma reference, and found that persisted quiz state alone currently admits the walkthrough. | Add red-first eligibility and persistence tests. |
++| 2026-08-02 | Hercules `019fb6d0-a2db-7291-aabe-dd10a3db9623` | Exact-head focused/native proof passed 125/125 at `d179f2c2`; TestFlight 4.37.1 (1756) became `VALID`, `INTERNAL_ONLY`, and `IN_BETA_TESTING`. | Reconcile Aviad's requested changes without weakening the fail-closed admission boundary. |
++| 2026-08-02 | Hercules `019fb6d0-a2db-7291-aabe-dd10a3db9623` | Aviad requested consumed-state precedence, a non-vacuous asynchronous UI assertion, and evidence-plan reconciliation. | Add the two regression pins, rerun focused/native proof, and refresh TestFlight for the strict descendant. |
++| 2026-08-02 | Hercules `019fb6d0-a2db-7291-aabe-dd10a3db9623` | Exact-head review proved the Atly Plus erasure implementation clears quiz/admission state, but `LogoutServiceKey.liveValue` omitted it from logout's cache dependencies. The suggested shorter UI wait was rejected because it would undo Aviad's required asynchronous negative proof. | Add the existing personalization service to logout cleanup, run focused proof, and revalidate the new exact head. |
++| 2026-08-03 | Ariadne `019fc4c1-eb9e-7dd2-8dce-7af180f78645` | Post-Aviad review found warm-start token account switching still bypassed canonical logout. Routed it through `LogoutService` and added a regression that requires the full logout coordinator for an already-authorized user. | Run focused/static proof and revalidate native journeys plus TestFlight on the strict descendant. |
++| 2026-08-03 | Ariadne `019fc4c1-eb9e-7dd2-8dce-7af180f78645` | Baz's follow-up proved canonical logout still used fire-and-forget cache erasure. Made logout await every cache dependency and strengthened the warm-start regression to hold navigation until simulated cleanup completes, then verify the new token route. | Revalidate the new exact head and replace the queued native request atomically. |
++| 2026-08-03 | Hercules `019fb6d0-a2db-7291-aabe-dd10a3db9623` | Exact product head `b20d12fb` passed the root selector 1/1, focused units 146/146, and both established-user and fresh-account native journeys twice. The owner-bound Beast simulator/session and central lease were released with terminal receipts. | Publish this evidence-only plan reconciliation, then bind one fresh TestFlight run to the resulting strict descendant. |
++
++## Dead Ends
++
++- A direct or 1-2 second Hero nonexistence assertion was rejected: asynchronous Hero resolution can take the full 15-second positive window, so the shorter check would be vacuous.
++- The `c9fa0ad0` TestFlight run cannot become final evidence for a descendant that changes logout cleanup; it must be preserved and reconciled, never relabeled as current-head proof.
++
++## Verification
++
++| Check | Status | Notes |
++|---|---|---|
++| Focused unit tests | passed | The exact-head root selector passed 1/1 and the focused pack passed 146/146 at `b20d12fb`. |
++| Native/XCUITest | passed | The established-user journey passed 2/2 and the fresh-account journey passed 2/2 at exact product head `b20d12fb`. |
++| Figma/visual | transfer pending | No redesign; evidence is ready, but exact node `30:30226` in file `aa4FFQxA7EJMeMCRRVGAbz` currently requires connector reauthentication. |
++| TestFlight | exact-head refresh pending | Manual TestFlight run 1853 remains bound to version-only descendant `fbbd9b2f` of product head `b20d12fb`. Because this evidence-only plan update creates a new source head, final TestFlight proof must use one fresh version-only descendant of that new head; run 1853 must not be relabeled as current-head proof. |
++
++## Handoff
++
++### Current Focus
++
++Preserve the completed native receipts, publish this evidence-only strict descendant, then finish its single exact-source TestFlight run and return the current evidence to Aviad without replaying released scheduler resources.
++
++### Next Steps
++
++1. Commit and publish this plan-only reconciliation as a strict descendant of `b20d12fb`.
++2. After run 1853 finishes, start at most one distinct version-only TestFlight build for the new source head and verify processing, concrete group visibility, and exact `What to Test` readback.
++3. Re-read the current-head PR checks and approval gates, move the issue to `In Review`, and return the exact evidence to Aviad for approval.

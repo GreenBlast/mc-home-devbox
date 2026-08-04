@@ -1,0 +1,977 @@
+{
+  "meta": {
+    "additions": 325,
+    "author": {
+      "id": "MDQ6VXNlcjM5OTkxODQ=",
+      "is_bot": false,
+      "login": "8Gaston8",
+      "name": "David Sulitzer"
+    },
+    "baseRefName": "develop",
+    "body": "# User description\nCloses #3490\n\n## What changed\n- require a durable qualifying-entry marker before server-assigned guided first sessions\n- fail closed for migrated or stale quiz state while preserving explicit QA routes\n- add persistence, eligibility, repeated-launch, and regression-plan coverage\n\n## Verification\n- SwiftFormat: clean\n- generic iOS Simulator product build: passed\n- pre-review focused/native proof: 125/125 passed across the focused pack and four native journeys at `d179f2c2a7ac54ed3835284fd5fcf76188e36ebe`\n- pre-review TestFlight: 4.37.1 (1756), Xcode Cloud run `ec92f4c8-f6c0-47d1-bf23-b0670c81004b`, `VALID`, `INTERNAL_ONLY`, `IN_BETA_TESTING`\n- current review-remediation head: `c9fa0ad0b16aeae7de690ce13a062779e0c771fc`; fresh focused/native/TestFlight revalidation is queued\n- visual evidence: evidence-ready/transfer-pending; the exact Figma node read is currently blocked by connector reauthentication\n\n---\n\n# Generated description\nPersist a durable guided-first-session admission marker in <code>AtlyPlusPersonalizationService</code> and enforce it in <code>GuidedFirstSessionService</code> so only qualifying long-quiz entrants can reach the guided flow, with migrated state falling back as <code>unqualifiedEntry</code>. Route token-based account switching through <code>LogoutService</code> and <code>RootViewModel</code> so logout clears account-scoped personalization before a new session starts, while UI-test helpers and regression coverage keep explicit QA paths available.\n<table><tr><th>Topic</th><th>Details</th><tr><td><a href=https://baz.co/changes/stepscode/steps-ios/3494?tool=ast&topic=Logout+cleanup>Logout cleanup</a>\n        </td><td>Route logout and token-based account switching through the canonical cleanup path so account-scoped personalization is erased before a new session, and keep test shims wired for the new behavior.<details><summary>Modified files (6)</summary><ul><li>STEPS.xcodeproj/project.pbxproj</li>\n<li>Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift</li>\n<li>Steps/AppFlows/Root/RootViewModel.swift</li>\n<li>Steps/AppFlows/Root/RootViewModelTests.swift</li>\n<li>Steps/AppServices/AppServices.swift</li>\n<li>Steps/Services/LogoutService.swift</li></ul></details><details><summary>Latest Contributors(2)</summary><table><tr><th>User</th><th>Commit</th><th>Date</th></tr><tr><td>davidsulitzer@icloud.com</td><td>Restore app flow test ...</td><td>August 03, 2026</td></tr>\n<tr><td>aviadsteps</td><td>Merge branch &#x27;develop&#x27;...</td><td>July 08, 2026</td></tr></table></details></td></tr>\n<tr><td><a href=https://baz.co/changes/stepscode/steps-ios/3494?tool=ast&topic=Eligibility+gate>Eligibility gate</a>\n        </td><td>Require a durable admission marker before resolving guided first session, and surface the new <code>unqualifiedEntry</code> fallback in onboarding, home-search, and regression coverage.<details><summary>Modified files (13)</summary><ul><li>AtlyTests/AtlyPlusLongQuizViewModelTests.swift</li>\n<li>AtlyTests/AtlyPlusPersonalizationServiceTests.swift</li>\n<li>AtlyTests/FollowUpResultsSheetViewModelTests.swift</li>\n<li>AtlyTests/UITestHelperTests.swift</li>\n<li>AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift</li>\n<li>REGRESSION_TESTING_PLAN.md</li>\n<li>Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift</li>\n<li>Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift</li>\n<li>Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift</li>\n<li>Steps/Helpers/UITestHelper.swift</li>\n<li>Steps/Services/AtlyPlusPersonalizationService.swift</li>\n<li>Steps/Services/GuidedFirstSessionService.swift</li>\n<li>docs/exec-plans/active/3490-guided-first-session-eligibility.md</li></ul></details><details><summary>Latest Contributors(2)</summary><table><tr><th>User</th><th>Commit</th><th>Date</th></tr><tr><td>davidsulitzer@icloud.com</td><td>Address guided-session...</td><td>August 02, 2026</td></tr>\n<tr><td>cursoragent@cursor.com</td><td>Add dog and work Atly ...</td><td>June 03, 2026</td></tr></table></details></td></tr></table>\n<sub><a href=\"https://baz.co/changes/stepscode/steps-ios/3494?tool=ast\">Review this PR on Baz</a> | <a href=\"https://baz.co/agents/baz\">Customize your next review</a></sub>",
+    "changedFiles": 19,
+    "createdAt": "2026-07-31T06:48:56Z",
+    "deletions": 16,
+    "files": [
+      {
+        "path": "AtlyTests/AtlyPlusLongQuizViewModelTests.swift",
+        "additions": 1,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/AtlyPlusPersonalizationServiceTests.swift",
+        "additions": 22,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/FollowUpResultsSheetViewModelTests.swift",
+        "additions": 1,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyTests/UITestHelperTests.swift",
+        "additions": 24,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+        "additions": 42,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "REGRESSION_TESTING_PLAN.md",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "STEPS.xcodeproj/project.pbxproj",
+        "additions": 4,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/FollowUpResultsSheetView.swift",
+        "additions": 12,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Home/Search/FollowUpResultsSheetViewModel.swift",
+        "additions": 2,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Onboarding/AtlyPlusQuizOnboarding.swift",
+        "additions": 1,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Profile Menu/ProfileMenuViewModel.swift",
+        "additions": 2,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Root/RootViewModel.swift",
+        "additions": 3,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppFlows/Root/RootViewModelTests.swift",
+        "additions": 46,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/AppServices/AppServices.swift",
+        "additions": 2,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/Helpers/UITestHelper.swift",
+        "additions": 48,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/Services/AtlyPlusPersonalizationService.swift",
+        "additions": 17,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/Services/GuidedFirstSessionService.swift",
+        "additions": 8,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "Steps/Services/LogoutService.swift",
+        "additions": 7,
+        "deletions": 9,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "docs/exec-plans/active/3490-guided-first-session-eligibility.md",
+        "additions": 82,
+        "deletions": 0,
+        "changeType": "ADDED"
+      }
+    ],
+    "headRefName": "codex/3490-guided-first-session-eligibility",
+    "isDraft": false,
+    "labels": [
+      {
+        "id": "LA_kwDOJF_Lac8AAAACS_mzGA",
+        "name": "codex",
+        "description": "",
+        "color": "ededed"
+      },
+      {
+        "id": "LA_kwDOJF_Lac8AAAACn76XcA",
+        "name": "baz: pending",
+        "description": "",
+        "color": "ededed"
+      }
+    ],
+    "mergeStateStatus": "BEHIND",
+    "mergeable": "MERGEABLE",
+    "number": 3494,
+    "reviewRequests": [
+      {
+        "__typename": "User",
+        "login": "aviadsteps"
+      }
+    ],
+    "reviews": [
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABH6lKqA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-07-31T06:53:29Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "51efd4b2aa90a2f90b1961b7b8f2995cdfddeef3"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHEXJQ",
+        "author": {
+          "login": "aviadsteps"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "The approach is right — a durable admission marker that fails closed for migrated state is the correct shape for this fix, and the migration details are handled well (`Bool?` in the QA backup struct so old payloads still decode, `eraseCachedData()` clears the marker, both profile-menu QA reset paths clear it).\n\nTwo blocking items before this lands, both commented inline:\n\n1. The new guard sits **above** the `.consumed` guard, so users who legitimately completed the guided journey on 4.36/4.37 now resolve `.unqualifiedEntry` instead of `.consumed` after upgrade. That corrupts the exact analytics readout #3490 names as its success metric, and it flips `shouldSuppressExistingHomeTooltips` for that cohort. One-line fix.\n2. `testEstablishedUserWithMigratedQuizStateNeverReentersGuidedFirstSession` asserts `.exists` synchronously against an asynchronously-resolved overlay, so it can pass even with the gate removed. This is the PR's central regression proof and the test the amended ONB-005 row now points at.\n\nTwo non-blocking questions:\n\n**Repeat-presentation for genuinely eligible users.** `markConsumed()` is only reached from `FollowUpResultsSheetViewModel.swift:2678`, i.e. after the guided search reaches `.results` with non-empty cards. A qualifying new user who sees the hero and kills the app before results load never sets `consumed`, and the new marker stays `true` forever — so the walkthrough re-presents on every launch. That's the same symptom #3490 reports, for the other cohort. #3490 lists \"Ensure repeated launches do not re-present the walkthrough after exclusion or consumption\" under Requirements and \"Eligible new long-quiz users still receive the journey exactly once\" under Acceptance Criteria, but also puts \"Walkthrough progress persistence after backgrounding\" out of scope. Could you state explicitly which side of that line this falls on, rather than leaving it implicit?\n\n**Verification evidence.** `AtlyTests` and `AtlyUITests` do not run on PR checks (AtlyPRSmoke is a fixed allowlist), so none of the tests added here execute in CI — the 125/125 result is a local run only. `Atly | Feature PR Checks` is still `pending` as of this review, so the product-build claim is also unconfirmed here. Separately, `docs/exec-plans/active/3490-guided-first-session-eligibility.md` ships with every acceptance criterion and every verification row marked `pending` and `last_updated: 2026-07-31`, which contradicts the PR description's \"focused native proof / TestFlight VALID\" claims at an Aug 2 head. Please reconcile the doc with the body before merge.\n\nMinor, take or leave: `isExplicitTestAssignment` rebuilds a subset of `allowedAssignmentSources` on every call (a pair of `static let` `Set<String>` would drop the duplication and the linear scans); and `restoreRelease436StateAfterInternalQA`'s `?? false` means a QA backup captured on an older build silently drops admission on restore.",
+        "submittedAt": "2026-08-02T16:52:59Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "CHANGES_REQUESTED",
+        "commit": {
+          "oid": "d179f2c2a7ac54ed3835284fd5fcf76188e36ebe"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHGGfg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T17:06:50Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHGHDQ",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T17:06:56Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHGU7A",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-08-02T17:09:19Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHGWZA",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-08-02T17:09:30Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHHKDA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T17:15:32Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHcV-w",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-08-02T20:27:26Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHcWQg",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-08-02T20:27:29Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "c9fa0ad0b16aeae7de690ce13a062779e0c771fc"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHdKwQ",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T20:35:50Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "22f9c636f1cd6d83217b933857d8d4877ea11729"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHdORg",
+        "author": {
+          "login": "8Gaston8"
+        },
+        "authorAssociation": "MEMBER",
+        "body": "",
+        "submittedAt": "2026-08-02T20:36:23Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "22f9c636f1cd6d83217b933857d8d4877ea11729"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHdyUA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T20:41:55Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "22f9c636f1cd6d83217b933857d8d4877ea11729"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHyA3w",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:37:25Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "a02c678e1d9c1413b40879d3267738b1c2a3a682"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHyB7w",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:37:31Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "a02c678e1d9c1413b40879d3267738b1c2a3a682"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIHytuw",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:42:25Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "a02c678e1d9c1413b40879d3267738b1c2a3a682"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH0BWg",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:50:51Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "13f64d7821f06281d26bacf65db0f004a896aa0e"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH0CAA",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:50:57Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "13f64d7821f06281d26bacf65db0f004a896aa0e"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH0E6A",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:51:25Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "13f64d7821f06281d26bacf65db0f004a896aa0e"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH0lng",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:56:25Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "COMMENTED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH034Q",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:59:06Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH036g",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:59:06Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH037Q",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:59:07Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH039Q",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:59:07Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      },
+      {
+        "id": "PRR_kwDOJF_Lac8AAAABIH039g",
+        "author": {
+          "login": "baz-reviewer"
+        },
+        "authorAssociation": "NONE",
+        "body": "",
+        "submittedAt": "2026-08-02T23:59:07Z",
+        "includesCreatedEdit": false,
+        "reactionGroups": [],
+        "state": "APPROVED",
+        "commit": {
+          "oid": "67d08593e14cf1bfe4077d26acf9053460f55c24"
+        }
+      }
+    ],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824085944/job/91721093218",
+        "name": "require-resolved-review-threads",
+        "startedAt": "2026-08-03T14:43:48Z",
+        "status": "COMPLETED",
+        "workflowName": "Require Resolved Review Threads"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:58Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824082994/job/91721082279",
+        "name": "sensitive-scope-approval-gate",
+        "startedAt": "2026-08-03T14:43:45Z",
+        "status": "COMPLETED",
+        "workflowName": "Sensitive Scope Approval Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824087173/job/91721097093",
+        "name": "gate",
+        "startedAt": "2026-08-03T14:43:57Z",
+        "status": "COMPLETED",
+        "workflowName": "ci-gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:45Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824085929/job/91721094310",
+        "name": "run-performance-tests",
+        "startedAt": "2026-08-03T14:43:45Z",
+        "status": "COMPLETED",
+        "workflowName": "performance-tests"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:45Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086966/job/91721097591",
+        "name": "run-release-static-analyze",
+        "startedAt": "2026-08-03T14:43:46Z",
+        "status": "COMPLETED",
+        "workflowName": "release-static-analyze"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086035/job/91721093646",
+        "name": "no-mont",
+        "startedAt": "2026-08-03T14:43:48Z",
+        "status": "COMPLETED",
+        "workflowName": "Font License Guard"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086000/job/91721093480",
+        "name": "swiftlint",
+        "startedAt": "2026-08-03T14:43:55Z",
+        "status": "COMPLETED",
+        "workflowName": "SwiftLint"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:06Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086003/job/91721093440",
+        "name": "plan",
+        "startedAt": "2026-08-03T14:43:55Z",
+        "status": "COMPLETED",
+        "workflowName": "Xcode Cloud PR Checks"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:00Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824085896/job/91721093012",
+        "name": "check-l10n",
+        "startedAt": "2026-08-03T14:43:48Z",
+        "status": "COMPLETED",
+        "workflowName": "localization"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824088367/job/91721101452",
+        "name": "validate-regression-plan",
+        "startedAt": "2026-08-03T14:43:49Z",
+        "status": "COMPLETED",
+        "workflowName": "regression-tests"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:46Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824088367/job/91721102269",
+        "name": "run-regression-tests",
+        "startedAt": "2026-08-03T14:43:47Z",
+        "status": "COMPLETED",
+        "workflowName": "regression-tests"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086003/job/91721189672",
+        "name": "run-xcode-cloud",
+        "startedAt": "2026-08-03T14:44:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Xcode Cloud PR Checks"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824085929/job/91721092964",
+        "name": "skipped",
+        "startedAt": "2026-08-03T14:43:48Z",
+        "status": "COMPLETED",
+        "workflowName": "performance-tests"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086966/job/91721096744",
+        "name": "skipped",
+        "startedAt": "2026-08-03T14:43:48Z",
+        "status": "COMPLETED",
+        "workflowName": "release-static-analyze"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:06Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824086003/job/91721190977",
+        "name": "skipped",
+        "startedAt": "2026-08-03T14:44:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Xcode Cloud PR Checks"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:43:46Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824088367/job/91721102119",
+        "name": "skipped",
+        "startedAt": "2026-08-03T14:43:47Z",
+        "status": "COMPLETED",
+        "workflowName": "regression-tests"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "sensitive-scope-approval-gate",
+        "startedAt": "2026-08-03T14:43:56Z",
+        "state": "FAILURE",
+        "targetUrl": "https://github.com/stepscode/steps-ios/actions/runs/30824082994"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Atly | Feature PR Checks",
+        "startedAt": "2026-08-03T15:02:55Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://appstoreconnect.apple.com/teams/0d089dbf-0b6f-4d5d-a06e-93e6197101cb/apps/1449597018/ci/builds/fdb2d096-0265-4588-abd8-7a1e05b409f6"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T15:02:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://appstoreconnect.apple.com/teams/0d089dbf-0b6f-4d5d-a06e-93e6197101cb/apps/1449597018/ci/builds/fdb2d096-0265-4588-abd8-7a1e05b409f6/action/83ee61e2-814b-44bd-8880-ba96974ba7ae",
+        "name": "Atly | Feature PR Checks | AtlyPRSmoke - iOS",
+        "startedAt": "2026-08-03T14:44:46Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-03T14:44:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://baz.co/sessions/5c092a7c-c3b0-461d-9cde-b303600b45c5",
+        "name": "Baz Reviewer",
+        "startedAt": "2026-08-03T14:43:55Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "ci/circleci: ci_gate",
+        "startedAt": "2026-08-03T14:43:51Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://circleci.com/gh/stepscode/steps-ios/71152"
+      }
+    ],
+    "title": "Fix repeated guided first sessions for existing users",
+    "updatedAt": "2026-08-03T15:19:37Z",
+    "url": "https://github.com/stepscode/steps-ios/pull/3494"
+  },
+  "review_threads": [
+    {
+      "isResolved": true,
+      "isOutdated": true,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "aviadsteps"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "**Blocking — this guard needs to sit below the `.consumed` check.**\n\nGuard order in `resolveHero` is now `missingLongQuiz → unqualifiedAssignment → unqualifiedEntry → missingExposure → consumed`. A user who legitimately completed the guided first session on 4.36/4.37 has `hasConsumedGuidedFirstSession() == true` and no admission marker, so on upgrade they short-circuit here and report `.unqualifiedEntry` — never reaching the `.consumed` guard on line 298.\n\nTwo consequences:\n\n**Analytics.** `FollowUpResultsSheetViewModel.swift:1335` emits `eligibilityResolved` for every reason except `gateOff`/`missingLongQuiz`, so `unqualified_entry` will swallow the entire already-consumed cohort. #3490 names `app_first_session_guided_eligibility_resolved` with `reason_family` as the readout for verifying this fix and asks that reason families distinguish established-user paths — this ordering makes that readout unable to separate \"never qualified\" from \"already had it.\"\n\n**UI.** `shouldSuppressExistingHomeTooltips` (`FollowUpResultsSheetViewModel.swift:449-462`) returns `true` for `.consumed` but `false` for `.unqualifiedEntry`. Consumed users therefore flip from suppressed to un-suppressed and become eligible for the legacy Home tooltips at `FollowUpResultsSheetView.swift:2220` and `:2229`. Blast radius is bounded by `userRepository.hasSeenHomeRootCategoryTooltip()`, but users who never saw those tips *because* the guided flow suppressed them will now start getting them.\n\nEither move the `consumed` guard above this one, or treat consumption as implying admission:\n\n```swift\nguard isExplicitTestAssignment\n    || personalizationService.hasQualifyingGuidedFirstSessionEntry()\n    || personalizationService.hasConsumedGuidedFirstSession()\nelse { return .fallback(.unqualifiedEntry) }\n```\n\nWorth a unit case pinning it: consumed state + no marker should resolve `.fallback(.consumed)`, not `.fallback(.unqualifiedEntry)`."
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "Commit c9fa0ad **addressed** this comment by placing the `.consumed` guard before the new `.unqualifiedEntry` guard. Consumed users without an admission marker now resolve as `.consumed` instead of `.unqualifiedEntry`."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "Addressed in `c9fa0ad0b16aeae7de690ce13a062779e0c771fc`. The consumed guard now runs after exposure but before the qualifying-entry fallback, preserving `.consumed` analytics and tooltip semantics for upgraded users. The focused unit matrix now pins consumed state plus no marker to `.fallback(.consumed)`. Fresh exact-head native revalidation is queued; I am leaving the thread open until that proof returns."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "Current-head proof has returned green for `c9fa0ad0b16aeae7de690ce13a062779e0c771fc`. The focused unit pack passed **131/131** with zero failures/skips and includes the consumed-without-marker case resolving to `.fallback(.consumed)`. The exact-head Feature PR check is also green. Durable native receipt SHA-256: `2b6f745d78e8c35f1d3fc5ef38b2b54c228ad55da613ca6aba65f364fba7856d` (evidence index SHA-256: `69c4ec3788f908c15d34efbd17317fee58afc0b64d010cdbce87ac51ffa7bfe2`). Resolving this addressed thread."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "aviadsteps"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "**Blocking — this assertion can pass even if the gate is removed.**\n\nHero resolution is asynchronous: map camera → `resolveHero` → network. The positive test for the same identifier at line 736 allows `waitForExistence(timeout: 15)`, so the hero legitimately takes seconds to appear after Home renders. Checking `.exists` synchronously the instant `\"Trending collections\"` shows up therefore proves nothing — revert the `GuidedFirstSessionService` change and this test still goes green unless the timing happens to line up.\n\nThere's also no assertion that the fixture actually applied. If `-UITestSeedUnqualifiedGuidedFirstSessionState` silently fails to seed (wrong launch-arg plumbing, ordering in `applyTestingConfiguration`, etc.), the test reads green for the wrong reason. `UITestHelperTests` covers the seeding in isolation, but nothing ties that to what the app under test actually loaded.\n\nSuggest asserting the negative over a window plus one positive check that the seeded state is live:\n\n```swift\nXCTAssertFalse(\n    element(\"guided_first_session_hero_title\").waitForExistence(timeout: 15),\n    \"Launch \\(launch) must not admit migrated quiz state into the guided first session\"\n)\n```\n\nThis matters more than usual because it's the regression proof the amended ONB-005 row in `REGRESSION_TESTING_PLAN.md` now points at, and because `AtlyUITests` never runs on PR checks — so nobody will catch a vacuous pass here from CI."
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Commit c9fa0ad **addressed** this comment by replacing the synchronous `.exists` check with a 15-second negative wait and adding a positive assertion that the seeded unqualified-entry state is present. The fixture is also wired through the launch arguments and validated by helper tests."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Addressed in `c9fa0ad0b16aeae7de690ce13a062779e0c771fc`. The UI test now first waits for a test-only accessibility breadcrumb that is emitted only when the seeded migrated-state fixture resolves to `.fallback(.unqualifiedEntry)`, then waits the full 15-second hero-resolution window and asserts that the Hero never appears. This proves both fixture application and non-admission. Fresh exact-head native revalidation is queued; I am leaving the thread open until that proof returns."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "Current-head proof has returned green for `c9fa0ad0b16aeae7de690ce13a062779e0c771fc`. `testEstablishedUserWithMigratedQuizStateNeverReentersGuidedFirstSession` passed **twice**; each invocation performed two internal launches, proved the positive unqualified-entry breadcrumb on every launch, and held the full 15-second Hero nonexistence window on every launch. The companion long-quiz/paywall/guided-search journey also passed twice. Durable native receipt SHA-256: `2b6f745d78e8c35f1d3fc5ef38b2b54c228ad55da613ca6aba65f364fba7856d`. Resolving this addressed thread."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "### Unscoped marker admits wrong account\n\n`resolveHero` gates server-assigned guided first sessions on `personalizationService.hasQualifyingGuidedFirstSessionEntry()`, but that marker lives in `CodableStorage` on `UserDefaults.standard`, so it can survive logout/account switching and let account B qualify off account A’s stale `longQuizState` — should we clear the AtlyPlus keys in the logout/erase path?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=high\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FServices%2FGuidedFirstSessionService.swift%20around%20lines%20295-300%20inside%20%60resolveHero%60%2C%20the%20new%20admission%20gate%20%60isExplicitTestAssignment%20%7C%7C%20personalizationService.hasQualifyingGuidedFirstSessionEntry%28%29%60%20can%20incorrectly%20pass%20after%20an%20account%20switch%20because%20the%20qualifying%20marker%2F%60longQuizState%60%20is%20persisted%20in%20UserDefaults%20%28device-global%29%20and%20may%20not%20be%20cleared%20on%20logout.%20Refactor%20so%20the%20persisted%20AtlyPlus%20personalization%20state%20is%20scoped%20to%20the%20active%20user%2Faccount%20%28e.g.%2C%20namespace%20the%20UserDefaults%20keys%20by%20account%2Fuser%20id%29%20and%2For%20store%20the%20account%20identifier%20alongside%20the%20marker%20and%20invalidate%20it%20in%20%60hasQualifyingGuidedFirstSessionEntry%28%29%60%20when%20it%20doesn%E2%80%99t%20match%20the%20current%20account.%20Additionally%2C%20ensure%20the%20logout%2Faccount-switch%20path%20reliably%20clears%20the%20AtlyPlus%20personalization%20keys%20%28or%20update%20%60UserRepository.eraseCachedData%28%29%60%2F%60AtlyPlusPersonalizationService.eraseCachedData%28%29%60%20to%20clear%20them%29%20so%20stale%20data%20can%E2%80%99t%20satisfy%20this%20guard%20for%20the%20wrong%20account.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/Services/GuidedFirstSessionService.swift around lines 295-300 inside\n`resolveHero`, the new admission gate `isExplicitTestAssignment ||\npersonalizationService.hasQualifyingGuidedFirstSessionEntry()` can incorrectly pass\nafter an account switch because the qualifying marker/`longQuizState` is persisted in\nUserDefaults (device-global) and may not be cleared on logout. Refactor so the persisted\nAtlyPlus personalization state is scoped to the active user/account (e.g., namespace the\nUserDefaults keys by account/user id) and/or store the account identifier alongside the\nmarker and invalidate it in `hasQualifyingGuidedFirstSessionEntry()` when it doesn’t\nmatch the current account. Additionally, ensure the logout/account-switch path reliably\nclears the AtlyPlus personalization keys (or update\n`UserRepository.eraseCachedData()`/`AtlyPlusPersonalizationService.eraseCachedData()` to\nclear them) so stale data can’t satisfy this guard for the wrong account.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "Commit 22f9c63 **addressed** this comment by wiring `AtlyPlusPersonalizationService` into the live logout cache-dependency list, ensuring its persisted quiz/admission state is erased during logout and cannot carry over to another account."
+          },
+          {
+            "author": {
+              "login": "8Gaston8"
+            },
+            "path": "Steps/Services/GuidedFirstSessionService.swift",
+            "body": "Addressed at exact PR head `22f9c636f1cd6d83217b933857d8d4877ea11729`. The existing `AtlyPlusPersonalizationService.eraseCachedData()` already clears `longQuizState`, the qualifying-entry marker, consumption, and retry state. This descendant now injects that service into `LogoutServiceKey.liveValue` and includes it in `LogoutServiceImpl` cache dependencies, so the logout cleanup loop actually invokes the erasure before another account can inherit those device-global values. Existing focused tests pin the service-level erase behavior; strict-descendant native revalidation remains required and pending."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "AtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift",
+            "body": "### UI test burns 15s on negative\n\n`XCTAssertFalse(element(\"guided_first_session_hero_title\").waitForExistence(timeout: 15), ...)` always burns the full 15s once the breadcrumb has appeared, and in the seeded `.fallback(.unqualifiedEntry)` path that hero is deterministically absent, so should we switch this to `waitForNonExistence(timeout: 1-2)` or a direct `XCTAssertFalse(element(...).exists)`?\n<!--\n_Finding type:_ `AI Coding Guidelines`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=AI%20Coding%20Guidelines&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz) You can also update your AI coding guidelines based on this comment by `apply pr to [branch name]`\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20AtlyUITests%2FFlows%2FAtlyPlusOnboardingChromeTests.swift%20around%20lines%2053-56%2C%20inside%20the%20established-user%20regression%20test%20where%20you%20assert%20the%20hero%20title%20is%20absent%2C%20you%20currently%20use%20XCTAssertFalse%28element%28%22guided_first_session_hero_title%22%29.waitForExistence%28timeout%3A%2015%29%2C%20...%29.%20Refactor%20this%20to%20avoid%20waiting%20the%20full%2015s%20for%20a%20negative%20condition%3A%20after%20the%20breadcrumb%20waitForExistence%20has%20already%20succeeded%2C%20either%20assert%20non-existence%20directly%20%28e.g.%2C%20element%28...%29.exists%20is%20false%29%20or%20use%20element%28...%29.waitForNonExistence%28timeout%3A%201%E2%80%932%29.%20Keep%20the%20assertion%20message%20but%20make%20the%20timeout%20small%2Fdeterministic%20so%20the%20test%20doesn%E2%80%99t%20burn%2015%20seconds%20every%20launch.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nAtlyUITests/Flows/AtlyPlusOnboardingChromeTests.swift around lines 53-56, inside the\nestablished-user regression test where you assert the hero title is absent, you\ncurrently use\nXCTAssertFalse(element(\"guided_first_session_hero_title\").waitForExistence(timeout: 15),\n...). Refactor this to avoid waiting the full 15s for a negative condition: after the\nbreadcrumb waitForExistence has already succeeded, either assert non-existence directly\n(e.g., element(...).exists is false) or use element(...).waitForNonExistence(timeout:\n1–2). Keep the assertion message but make the timeout small/deterministic so the test\ndoesn’t burn 15 seconds every launch.\n```\n\n</details>\n</details>"
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppServices/AppServices.swift",
+            "body": "### Warm-start leaks Atly Plus state\n\nThe warm-start auto-login path in `RootViewModel` calls `dependencies.authRepository.logout()` directly instead of `LogoutService.logout()`, so `AtlyPlusPersonalizationService.eraseCachedData()` never runs and the previous account’s persisted Atly Plus state can carry into the new login — should we route that path through `LogoutService`?\n<!--\n_Finding type:_ `Basic Security Patterns`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Basic%20Security%20Patterns&severity=high\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppServices%2FAppServices.swift%20around%20lines%20150-152%20within%20%60LogoutServiceKey.liveValue%60%2F%60LogoutServiceImpl%60%20cacheDependencies%2C%20you%20added%20%60%40Dependency%28%5C.atlyPlusPersonalizationService%29%60%20but%20the%20warm-start%20auto-login%20path%20in%20%60RootViewModel%60%20still%20calls%20%60dependencies.authRepository.logout%28%29%60%20directly%20and%20bypasses%20%60LogoutService.logout%28%29%60.%20Refactor%20the%20warm-start%20logic%20so%20that%20any%20required%20pre-login%20logout%20%28token-based%20authorization%20reset%29%20goes%20through%20%60LogoutService.logout%28%29%60%20%28or%20a%20single%20shared%20logout%20coordinator%29%20to%20ensure%20%60AtlyPlusPersonalizationService.eraseCachedData%28%29%60%20always%20runs%20before%20routing%20to%20onboarding.%20Update%20the%20relevant%20%60RootViewModel%60%20code%20to%20remove%20the%20direct%20%60authRepository.logout%28%29%60%20call%20%28or%20have%20it%20delegate%20to%20%60LogoutService%60%29%20and%20ensure%20the%20new-account%20context%20can%E2%80%99t%20inherit%20cached%20Atly%20Plus%20values.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppServices/AppServices.swift around lines 150-152 within\n`LogoutServiceKey.liveValue`/`LogoutServiceImpl` cacheDependencies, you added\n`@Dependency(\\.atlyPlusPersonalizationService)` but the warm-start auto-login path in\n`RootViewModel` still calls `dependencies.authRepository.logout()` directly and bypasses\n`LogoutService.logout()`. Refactor the warm-start logic so that any required pre-login\nlogout (token-based authorization reset) goes through `LogoutService.logout()` (or a\nsingle shared logout coordinator) to ensure\n`AtlyPlusPersonalizationService.eraseCachedData()` always runs before routing to\nonboarding. Update the relevant `RootViewModel` code to remove the direct\n`authRepository.logout()` call (or have it delegate to `LogoutService`) and ensure the\nnew-account context can’t inherit cached Atly Plus values.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppServices/AppServices.swift",
+            "body": "Commit a02c678 **addressed** this comment by routing warm-start token login through `dependencies.logoutService.logout()` instead of directly calling `authRepository.logout()`, ensuring account-scoped cached state is erased."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppServices/AppServices.swift",
+            "body": "The warm-start auto-login/account switching path in `RootViewModel` calls `dependencies.authRepository.logout()` directly, bypassing `dependencies.logoutService.logout()`, so `AtlyPlusPersonalizationService.eraseCachedData()` never runs and `hasQualifyingGuidedFirstSessionEntry` stays `true` — letting `GuidedFirstSessionService.resolveHero` re-enable guided-first-session eligibility from the previous account. Should we route this warm-start path through `dependencies.logoutService.logout()`, or otherwise trigger `eraseCachedData()` before proceeding?\n<!--\n_Finding types:_ `Breaking Changes` `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Breaking%20Changes%20%C2%B7%20Logical%20Bugs&severity=high\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppServices%2FAppServices.swift%20around%20lines%20162-167%2C%20%60LogoutServiceKey.liveValue%60%20now%20includes%20%60atlyPlusPersonalizationService%60%20in%20%60cacheDependencies%60%2C%20so%20logout%20is%20expected%20to%20trigger%20%60AtlyPlusPersonalizationService.eraseCachedData%28%29%60%20and%20clear%20guided-first-session%20eligibility%20keys.%20However%2C%20%60RootViewModel%60%27s%20warm-start%20auto-login%2Faccount-switching%20path%20bypasses%20%60dependencies.logoutService.logout%28%29%60%20and%20calls%20%60await%20dependencies.authRepository.logout%28%29%60%20directly%2C%20which%20only%20clears%20auth%20tokens%20and%20leaves%20%60hasQualifyingGuidedFirstSessionEntry%60%20unchanged%2C%20potentially%20leaking%20the%20prior%20account%27s%20personalization%20state%20into%20the%20next%20onboarding.%20Refactor%20the%20warm-start%20logout%20flow%20in%20%60RootViewModel%60%20to%20call%20%60logoutService.logout%28%29%60%20%28or%20explicitly%20call%20%60atlyPlusPersonalizationService.eraseCachedData%28%29%60%29%20before%20any%20onboarding%2Fguided-first%20eligibility%20checks%20run%2C%20ensuring%20erasure%20completes%20before%20%60GuidedFirstSessionService.resolveHero%60%20evaluates%20eligibility.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppServices/AppServices.swift around lines 162-167, `LogoutServiceKey.liveValue`\nnow includes `atlyPlusPersonalizationService` in `cacheDependencies`, so logout is\nexpected to trigger `AtlyPlusPersonalizationService.eraseCachedData()` and clear\nguided-first-session eligibility keys. However, `RootViewModel`'s warm-start\nauto-login/account-switching path bypasses `dependencies.logoutService.logout()` and\ncalls `await dependencies.authRepository.logout()` directly, which only clears auth\ntokens and leaves `hasQualifyingGuidedFirstSessionEntry` unchanged, potentially leaking\nthe prior account's personalization state into the next onboarding. Refactor the\nwarm-start logout flow in `RootViewModel` to call `logoutService.logout()` (or\nexplicitly call `atlyPlusPersonalizationService.eraseCachedData()`) before any\nonboarding/guided-first eligibility checks run, ensuring erasure completes before\n`GuidedFirstSessionService.resolveHero` evaluates eligibility.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppServices/AppServices.swift",
+            "body": "Commit a02c678 **addressed** this comment by routing warm-start token account switching through `dependencies.logoutService.logout()` instead of calling the auth repository directly. A regression test also verifies the canonical logout service is used for authorized users."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Root/RootViewModelTests.swift",
+            "body": "`testHandleExternalActionLoginLogsOutAuthorizedUserThroughCanonicalService()` only waits on `logoutServiceMock.logoutCalled`, which fires immediately in the mock, so the test can't catch cleanup completing out of order or Root failing to navigate to `.onboarding(.login(token: \"new_account_token\"))` afterward — should we make the mock's `logout()` complete only after simulated cleanup finishes, then wait for that completion and assert the navigation action follows it?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppFlows%2FRoot%2FRootViewModelTests.swift%20around%20lines%20455-473%2C%20%60testHandleExternalActionLoginLogsOutAuthorizedUserThroughCanonicalService%28%29%60%20only%20waits%20for%20%60logoutServiceMock.logoutCalled%60%20and%20asserts%20it%2C%20but%20since%20%60LogoutServiceMock.logout%28%29%60%20returns%20immediately%2C%20the%20test%20proves%20neither%20that%20cleanup%20finishes%20before%20onboarding%20routing%20nor%20that%20Root%20actually%20navigates%20into%20onboarding%20for%20the%20new%20external-login%20token.%20Refactor%20%60LogoutServiceMock%60%20so%20%60logout%28%29%60%20completes%20only%20after%20simulated%20cache%20erasure%2Fcleanup%20work%20finishes%20%28e.g.%2C%20gate%20completion%20on%20a%20manually-resolved%20continuation%20or%20explicit%20%22cleanup%20finished%22%20flag%29%2C%20then%20update%20the%20test%20to%20wait%20for%20that%20completion%20signal%20instead%20of%20just%20invocation.%20After%20that%2C%20add%20an%20assertion%20%28with%20a%20second%20%60waitUntil%60%20if%20the%20navigation%20is%20emitted%20asynchronously%29%20that%20%60receivedNavigationAction%60%20includes%2Fequals%20%60.onboarding%28.login%28token%3A%20%22new_account_token%22%29%29%60%20and%20occurs%20only%20after%20the%20cleanup-finished%20signal%2C%20so%20the%20test%20verifies%20the%20full%20flow%3A%20logout%20completion%2C%20correct%20ordering%2C%20and%20correct%20onboarding%20navigation.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppFlows/Root/RootViewModelTests.swift around lines 455-473,\n`testHandleExternalActionLoginLogsOutAuthorizedUserThroughCanonicalService()` only waits\nfor `logoutServiceMock.logoutCalled` and asserts it, but since\n`LogoutServiceMock.logout()` returns immediately, the test proves neither that cleanup\nfinishes before onboarding routing nor that Root actually navigates into onboarding for\nthe new external-login token. Refactor `LogoutServiceMock` so `logout()` completes only\nafter simulated cache erasure/cleanup work finishes (e.g., gate completion on a\nmanually-resolved continuation or explicit \"cleanup finished\" flag), then update the\ntest to wait for that completion signal instead of just invocation. After that, add an\nassertion (with a second `waitUntil` if the navigation is emitted asynchronously) that\n`receivedNavigationAction` includes/equals `.onboarding(.login(token:\n\"new_account_token\"))` and occurs only after the cleanup-finished signal, so the test\nverifies the full flow: logout completion, correct ordering, and correct onboarding\nnavigation.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Root/RootViewModelTests.swift",
+            "body": "Commit 13f64d7 **addressed** this comment by gating the mock logout completion, asserting navigation is blocked beforehand, then finishing logout and verifying onboarding login navigation with the expected token."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": false,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Root/RootViewModel.swift",
+            "body": "### Awaiting logout doesn’t erase caches\n\n`LogoutServiceImpl.logout()` starts `eraseCachedData()` in a fire-and-forget `Task`, so `await logout()` can return before `GuidedFirstSessionService.resolveHero(...)` sees cleared flags and the onboarding state can be wrong — should we await the cache-erasure loop instead?\n<!--\n_Finding type:_ `Logical Bugs`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Logical%20Bugs&severity=high\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20Steps%2FAppFlows%2FRoot%2FRootViewModel.swift%20around%20lines%20484-488%20inside%20the%20%60.shouldLoginUsingToken%60%20switch%20case%2C%20the%20logic%20assumes%20%60await%20dependencies.logoutService.logout%28%29%60%20is%20a%20real%20cleanup%20barrier%20before%20returning%20the%20%60.onboarding%28...%29%60%20flow.%20This%20is%20currently%20invalid%20because%20LogoutServiceImpl.logout%28%29%20likely%20fire-and-forgets%20cache%20erasure%20in%20an%20unawaited%20Task.%20Fix%20by%20updating%20Steps%2FServices%2FLogoutService.swift%20in%20%60LogoutServiceImpl.logout%28%29%60%20to%20remove%20the%20fire-and-forget%20Task%20and%20instead%20directly%20%60await%60%20the%20dependency%20loop%20that%20calls%20%60eraseCachedData%28%29%60%20%28including%20the%20account-scoped%20erase%20calls%29%2C%20so%20that%20%60await%20logout%28%29%60%20only%20returns%20after%20caches%20are%20fully%20cleared.%20Then%20re-check%20that%20onboarding%20routing%20and%20any%20guided-session%20state%20reads%20%28e.g.%2C%20hero%20resolution%29%20cannot%20observe%20stale%20cache%20values.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\nSteps/AppFlows/Root/RootViewModel.swift around lines 484-488 inside the\n`.shouldLoginUsingToken` switch case, the logic assumes `await\ndependencies.logoutService.logout()` is a real cleanup barrier before returning the\n`.onboarding(...)` flow. This is currently invalid because LogoutServiceImpl.logout()\nlikely fire-and-forgets cache erasure in an unawaited Task. Fix by updating\nSteps/Services/LogoutService.swift in `LogoutServiceImpl.logout()` to remove the\nfire-and-forget Task and instead directly `await` the dependency loop that calls\n`eraseCachedData()` (including the account-scoped erase calls), so that `await logout()`\nonly returns after caches are fully cleared. Then re-check that onboarding routing and\nany guided-session state reads (e.g., hero resolution) cannot observe stale cache\nvalues.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "Steps/AppFlows/Root/RootViewModel.swift",
+            "body": "Commit 13f64d7 **addressed** this comment by replacing the fire-and-forget `Task` with a directly awaited cache-erasure loop. `logout()` now waits for each dependency’s `eraseCachedData()` call before returning."
+          }
+        ]
+      }
+    },
+    {
+      "isResolved": true,
+      "isOutdated": true,
+      "comments": {
+        "nodes": [
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "docs/exec-plans/active/3490-guided-first-session-eligibility.md",
+            "body": "### Incorrect terminology in execution plan\n\nThe phrase `fire-and-forgot cache erasure` is grammatically off; should we change it to `fire-and-forget cache erasure`?\n<!--\n_Finding type:_ `Naming and Typos`\n-->\n\n<picture><img src=\"https://baz.co/api/v2/badges?type=reviewer&content=Naming%20and%20Typos&severity=low\" alt=\"Severity\" height=\"24\" /></picture>\n\nWant Baz to fix this for you? [Activate Fixer](https://baz.co/agents/baz)\n\n<details>\n<summary>Other fix methods</summary>\n\n\n<a href=\"https://cursor.com/link/prompt?text=Before%20applying%2C%20verify%20this%20suggestion%20against%20the%20current%20code.%0AIn%20docs%2Fexec-plans%2Factive%2F3490-guided-first-session-eligibility.md%20around%20line%2055%2C%20update%20the%20changelog%20sentence%20that%20says%20%E2%80%9CBaz%27s%20follow-up%20proved%20canonical%20logout%20still%20fire-and-forgot%20cache%20erasure.%E2%80%9D%20Change%20the%20phrase%20to%20%E2%80%9Cfire-and-forget%20cache%20erasure%E2%80%9D%20%28remove%20the%20%E2%80%9C-forgot%E2%80%9D%20ending%29%20so%20the%20wording%20is%20grammatically%20correct%20and%20matches%20the%20intended%20%E2%80%9Cnon-awaited%20operation%E2%80%9D%20meaning.%20Keep%20the%20rest%20of%20the%20entry%20unchanged.\" target=\"_blank\" rel=\"noopener noreferrer\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/fix-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/fix-in-cursor-light.svg\"><img alt=\"Fix in Cursor\" src=\"https://cursor.com/fix-in-cursor.svg\"></picture></a>\n\n<details>\n<summary>Prompt for AI Agents</summary>\n\n```text\nBefore applying, verify this suggestion against the current code. In\ndocs/exec-plans/active/3490-guided-first-session-eligibility.md around line 55, update\nthe changelog sentence that says “Baz's follow-up proved canonical logout still\nfire-and-forgot cache erasure.” Change the phrase to “fire-and-forget cache\nerasure” (remove the “-forgot” ending) so the wording is grammatically correct and\nmatches the intended “non-awaited operation” meaning. Keep the rest of the entry\nunchanged.\n```\n\n</details>\n</details>"
+          },
+          {
+            "author": {
+              "login": "baz-reviewer"
+            },
+            "path": "docs/exec-plans/active/3490-guided-first-session-eligibility.md",
+            "body": "Commit 67d0859 **addressed** this comment by changing “fire-and-forgot” to “fire-and-forget” in the execution plan."
+          }
+        ]
+      }
+    }
+  ],
+  "diff_file": "/home/aviad/mc/traces/pr-ios-3494/collect/e8af28c3d2e3/steps-ios-3494.diff",
+  "signals": {
+    "ci_config_files": [],
+    "serverless_yml": [],
+    "migration_files": [],
+    "test_or_settings_files": [],
+    "payments_files": [],
+    "asset_files": [],
+    "secret_literal_suspects": [
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623",
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623",
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623",
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623",
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623",
+      "019fc4c1-eb9e-7dd2-8dce-7af180f78645",
+      "019fc4c1-eb9e-7dd2-8dce-7af180f78645",
+      "019fb6d0-a2db-7291-aabe-dd10a3db9623"
+    ],
+    "index_from_code_hits": [],
+    "unawaited_telemetry_suspects": [],
+    "fibery_linked": false,
+    "has_conflicts": false
+  }
+}
