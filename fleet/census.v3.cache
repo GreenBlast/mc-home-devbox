@@ -1,5 +1,5 @@
-9	%0	Main:1	personal	nosignal	4376	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
-1	%19	hermes-mc-remote-guard:1	personal	needs	1269	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run the dispatch command to confirm, and tell me if you want the changes
-1	%21	Main:2	personal	needs	136	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	Next action is your call on whether I run docker builder prune -af
-1	%22	Main:3	personal	needs	131	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	decide whether you want the self-healing auto-reload automation
-0	%25	Main:4	personal	needs	131	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	⏸ at an interactive prompt — answer to continue
+9	%0	Main:1	personal	nosignal	4436	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+1	%19	hermes-mc-remote-guard:1	personal	needs	1329	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run the dispatch command to confirm, and tell me if you want the changes
+1	%21	Main:2	personal	needs	196	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	Next action is your call on whether I run docker builder prune -af
+1	%22	Main:3	personal	needs	192	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	decide whether you want the self-healing auto-reload automation
+0	%25	Main:4	personal	needs	192	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	⏸ at an interactive prompt — answer to continue
