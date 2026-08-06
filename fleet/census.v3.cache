@@ -1,10 +1,10 @@
-9	%0	Main:1	personal	nosignal	551	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
-0	%19	hermes-mc-remote-guard:1	personal	needs	516	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run your mc-remote dispatch command to confirm it goes through
-9	%22	Main:2	personal	nosignal	17	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	Debug timer.turn_off_ac automation failure
-1	%25	Main:3	personal	needs	544	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or r iveted, then order a 
-9	%26	gfe-watch:1	work	nosignal	0	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	Set up devbox launch Agent A for GFE closure
-9	%27	gfe-watch:2	work	nosignal	25	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	Set up GFE auth watcher agent B
-1	%28	Main:4	personal	needs	12	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	Next up is the tamper pipeline, which needs the Telegram bot token + cha
-2	%29	Main:5	personal	needs	21	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	ha-dashboard-rollback-setup	0	open it and tell me what to change
-9	%30	Main:6	personal	nosignal	16	0	0	5bc01e7d-52f7-452c-b5c8-2781aefc7b8b	-	Prepare Shabbat AC automation for 2026	0	Prepare Shabbat AC automation for 2026
-9	%31	Main:7	personal	nosignal	14	0	0	8f44365a-370f-414d-b9c8-97113d9e1343	-	Set up DNS for internal service discovery	0	Set up DNS for internal service discovery
+9	%0	Main:1	personal	nosignal	611	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+0	%19	hermes-mc-remote-guard:1	personal	needs	576	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run your mc-remote dispatch command to confirm it goes through
+9	%22	Main:2	personal	nosignal	77	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	Debug timer.turn_off_ac automation failure
+1	%25	Main:3	personal	needs	604	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or r iveted, then order a 
+2	%26	gfe-watch:1	work	needs	0	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	this isn't the watch failing to see it
+9	%27	gfe-watch:2	work	nosignal	6	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	Set up GFE auth watcher agent B
+1	%28	Main:4	personal	needs	72	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	Next up is the tamper pipeline, which needs the Telegram bot token + cha
+2	%29	Main:5	personal	needs	81	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	ha-dashboard-rollback-setup	0	open it and tell me what to change
+9	%30	Main:6	personal	nosignal	76	0	0	5bc01e7d-52f7-452c-b5c8-2781aefc7b8b	-	Prepare Shabbat AC automation for 2026	0	Prepare Shabbat AC automation for 2026
+9	%31	Main:7	personal	nosignal	74	0	0	8f44365a-370f-414d-b9c8-97113d9e1343	-	Set up DNS for internal service discovery	0	Set up DNS for internal service discovery
