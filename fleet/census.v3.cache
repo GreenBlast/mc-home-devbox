@@ -1,7 +1,9 @@
-9	%0	Main:1	personal	nosignal	5582	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
-9	%19	hermes-mc-remote-guard:1	personal	working	0	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	⚙ working
-1	%21	Main:2	personal	needs	1342	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	Next action is your call on whether I run docker builder prune -af
-1	%22	Main:3	personal	needs	1338	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	decide whether you want the self-healing auto-reload automation
-1	%25	Main:4	personal	needs	782	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or riveted, then order a p
-9	%26	gfe-watch:1	work	nosignal	10	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	Set up devbox launch Agent A for GFE closure
-9	%27	gfe-watch:2	work	nosignal	14	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	Set up GFE auth watcher agent B
+9	%0	Main:1	personal	nosignal	6	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+1	%19	hermes-mc-remote-guard:1	personal	needs	32	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run your mc-remote dispatch command to confirm it goes through
+9	%21	Main:2	personal	nosignal	0	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	disk-usage-alert-investigation
+2	%22	Main:3	personal	needs	2	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	re-authenticate Tuya in Settings, Devices & Services, Reconfigure
+9	%25	Main:4	personal	working	0	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	⚙ working — was: check whether your Front Line clip is screwed or riveted, then order a p
+2	%26	gfe-watch:1	work	needs	8	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	keep sweeping every 20 minutes until the 16:47Z stop, then write the sum
+1	%27	gfe-watch:2	work	needs	21	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	Next action is your call: keep the watch running to its 16:50 UTC stop, 
+2	%28	Main:5	personal	needs	31	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	Next step is diagnosing why the subscription drops, before any reload wi
+1	%29	Main:6	personal	needs	999999	0	0	-	-	Discuss Home Assistant dashboard build progress	0	 Next I need your call on build method plus the two zigbee sensor locati
