@@ -1,9 +1,9 @@
-9	%0	Main:1	personal	nosignal	430	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
-0	%19	hermes-mc-remote-guard:1	personal	needs	395	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run your mc-remote dispatch command to confirm it goes through
-9	%21	Main:2	personal	nosignal	421	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	disk-usage-alert-investigation
-2	%22	Main:3	personal	needs	423	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	next check is tonight's timer run
-1	%25	Main:4	personal	needs	423	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or riveted, then order a p
-9	%26	gfe-watch:1	work	working	0	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	⚙ working — was: continue 20-minute sweeps until the 08:45Z stop, watching for the first 
-9	%27	gfe-watch:2	work	waiting	4	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	check in Atlas whether bbER_FlFUrX and UwfNhiJGpFi had their closure mar
-1	%28	Main:5	personal	needs	411	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	your go-ahead to build the self-healing watchdog, plus whether the armed
-2	%29	Main:6	personal	needs	407	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	Discuss Home Assistant dashboard build progress	0	open it and tell me what to change
+9	%0	Main:1	personal	nosignal	491	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+0	%19	hermes-mc-remote-guard:1	personal	needs	456	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	run your mc-remote dispatch command to confirm it goes through
+9	%21	Main:2	personal	nosignal	482	0	0	adfde744-877f-4bb2-95dd-cf68bf636e13	-	disk-usage-alert-investigation	0	disk-usage-alert-investigation
+2	%22	Main:3	personal	needs	484	0	0	1029b05f-8350-42ad-b65f-40486c095c20	-	Debug timer.turn_off_ac automation failure	0	next check is tonight's timer run
+1	%25	Main:4	personal	needs	484	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or riveted, then order a p
+1	%26	gfe-watch:1	work	needs	0	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	keep watching, and the device-id question still needs your Mongo check
+9	%27	gfe-watch:2	work	waiting	16	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	check in Atlas whether bbER_FlFUrX and UwfNhiJGpFi had their closure mar
+1	%28	Main:5	personal	needs	472	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	your go-ahead to build the self-healing watchdog, plus whether the armed
+2	%29	Main:6	personal	needs	468	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	Discuss Home Assistant dashboard build progress	0	open it and tell me what to change
