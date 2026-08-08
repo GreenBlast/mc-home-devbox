@@ -1,11 +1,11 @@
-9	%0	Main:1	personal	nosignal	2604	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
-9	%19	hermes-mc-remote-guard:1	personal	nosignal	1952	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	Fix mc-remote lifecycle guard false positive
-1	%25	Main:2	personal	needs	2597	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or r iveted, then order a 
-9	%26	gfe-watch:1	work	nosignal	1024	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	Set up devbox launch Agent A for GFE closure
-1	%27	gfe-watch:2	work	needs	1035	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	next time: aggregates hide firsts — a counter that merges two flows ca
-9	%28	Main:3	personal	nosignal	928	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	Continue Tapo C260 camera agent handover
-2	%29	Main:4	personal	needs	2074	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	ha-dashboard-rollback-setup	0	open it and tell me what to change
-9	%30	Main:5	personal	nosignal	1264	0	0	5bc01e7d-52f7-452c-b5c8-2781aefc7b8b	-	Prepare Shabbat AC automation for 2026	0	Prepare Shabbat AC automation for 2026
-9	%31	Main:6	personal	nosignal	2067	0	0	8f44365a-370f-414d-b9c8-97113d9e1343	-	Set up DNS for internal service discovery	0	Set up DNS for internal service discovery
-9	%32	Main:7	personal	nosignal	1259	0	0	36b2c1f3-db78-4ca4-84f3-a32e5758e429	-	Add last_updated field to Shabbat plan	0	Add last_updated field to Shabbat plan
-2	%33	Main:8	personal	needs	55	0	0	8f1f69c3-3fe3-4cee-93fb-721104bdbe8e	-	regression-suite-pre-entry-check	0	NEXT: hourly 05:06 and 06:06, then wake ~07:03 for the 07:00 boundary (`
+9	%0	Main:1	personal	nosignal	2665	0	0	84c6d967-09f2-4fc1-8e26-82b92ffcd61a	-	obsidian-helper	0	obsidian-helper
+9	%19	hermes-mc-remote-guard:1	personal	nosignal	2013	0	0	61689ce5-34a8-4320-bcaa-1ba426eb589d	-	Fix mc-remote lifecycle guard false positive	0	Fix mc-remote lifecycle guard false positive
+1	%25	Main:2	personal	needs	2658	0	0	f8481a85-6921-43e6-a33f-2cd8779f54f0	-	Research IWB holster solutions for Glock 19	0	check whether your Front Line clip is screwed or r iveted, then order a 
+9	%26	gfe-watch:1	work	nosignal	1085	0	0	7104ca5c-c8eb-4ee5-b300-987bdf92a8e9	-	Set up devbox launch Agent A for GFE closure	0	Set up devbox launch Agent A for GFE closure
+1	%27	gfe-watch:2	work	needs	1096	0	0	d9b4f6e7-4d5e-4714-8359-7d49917a6e4a	-	Set up GFE auth watcher agent B	0	next time: aggregates hide firsts — a counter that merges two flows ca
+9	%28	Main:3	personal	nosignal	989	0	0	d3dd3049-c04b-4f32-8eb5-47619a69dbbf	-	Continue Tapo C260 camera agent handover	0	Continue Tapo C260 camera agent handover
+2	%29	Main:4	personal	needs	2135	0	0	a3e8f099-db05-4ec1-a955-1bd346cca415	-	ha-dashboard-rollback-setup	0	open it and tell me what to change
+9	%30	Main:5	personal	nosignal	1325	0	0	5bc01e7d-52f7-452c-b5c8-2781aefc7b8b	-	Prepare Shabbat AC automation for 2026	0	Prepare Shabbat AC automation for 2026
+9	%31	Main:6	personal	nosignal	2128	0	0	8f44365a-370f-414d-b9c8-97113d9e1343	-	Set up DNS for internal service discovery	0	Set up DNS for internal service discovery
+9	%32	Main:7	personal	nosignal	1320	0	0	36b2c1f3-db78-4ca4-84f3-a32e5758e429	-	Add last_updated field to Shabbat plan	0	Add last_updated field to Shabbat plan
+2	%33	Main:8	personal	needs	0	0	0	8f1f69c3-3fe3-4cee-93fb-721104bdbe8e	-	regression-suite-pre-entry-check	0	Next transition is 09:00 (morning opens — kitchen and salon both come 
